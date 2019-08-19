@@ -1,4 +1,4 @@
-# editing-vue-page
+# editable-vue-page
 
 ## Project setup
 ```
