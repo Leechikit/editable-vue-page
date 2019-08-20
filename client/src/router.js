@@ -1,20 +1,35 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
 
 Vue.use(Router)
 
 export default new Router({
-  // mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Home
+      redirect: { name: 'admin' }
     },
     {
-      path: '/background',
+      path: '/admin',
+      name: 'admin',
+      redirect: { name: 'plugin/project' },
+      component: () => import('@/views/admin'),
+      children: [
+        {
+          path: 'plugin/platform',
+          name: 'plugin/platform',
+          component: () => import('@/views/admin/plugin/platform')
+        },
+        {
+          path: 'plugin/project',
+          name: 'plugin/project',
+          component: () => import('@/views/admin/plugin/project')
+        }
+      ]
+    },
+    {
+      path: 'background',
       name: 'background',
       component: () => import('@/views/background')
     }

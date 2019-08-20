@@ -25,19 +25,22 @@
       >
     </div>
     <div class="content">
-      <el-tabs type="card" @tab-click="handleClick">
+      <codemirror
+        v-model="editorCode['html']"
+        :options="editorOption"
+      ></codemirror>
+      <!-- <el-tabs type="card" @tab-click="handleClick">
         <el-tab-pane
           v-for="(item, $index) in editorType"
           :key="$index"
           :label="item.toUpperCase()"
         >
           <codemirror
-            :value="editorCode[item]"
+            v-model="editorCode[item]"
             :options="editorOption"
           ></codemirror>
-          <!-- <editor :ref="item" :language="item" @change="codeChange"></editor> -->
         </el-tab-pane>
-      </el-tabs>
+      </el-tabs> -->
       <div class="save-btn">
         <el-button type="primary" @click="save">保存</el-button>
       </div>
@@ -118,7 +121,8 @@ export default {
       },
       editorOption: {
         tabSize: 4,
-        lineNumbers: true
+        lineNumbers: true,
+        fixedGutter: true
       },
       currTabIndex: 0,
       ruleForm: {
