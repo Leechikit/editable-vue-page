@@ -17,6 +17,11 @@ export default new Router({
       component: () => import('@/views/admin'),
       children: [
         {
+          path: 'page/home',
+          name: 'page/home',
+          component: () => import('@/views/admin/page/home')
+        },
+        {
           path: 'plugin/platform',
           name: 'plugin/platform',
           component: () => import('@/views/admin/plugin/platform')
@@ -25,6 +30,11 @@ export default new Router({
           path: 'plugin/project',
           name: 'plugin/project',
           component: () => import('@/views/admin/plugin/project')
+        },
+        {
+          path: 'plugin/project/:id',
+          name: 'plugin/project/editor',
+          component: () => import('@/views/admin/plugin/project/editor.vue')
         }
       ]
     },

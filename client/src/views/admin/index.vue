@@ -2,7 +2,19 @@
   <div class="admin">
     <el-container class="admin-container">
       <el-aside width="200px">
-        <el-menu class="admin-menu" :default-active="$route.path" router>
+        <el-menu
+          class="admin-menu"
+          :default-openeds="['admin/page', 'admin/plugin']"
+          :default-active="$route.path.replace(/\/\d+$/, '')"
+          @select="selectMenu"
+        >
+          <el-submenu index="admin/page">
+            <div slot="title">
+              <i class="el-icon-s-home"></i>
+              <span>页面管理</span>
+            </div>
+            <el-menu-item index="/admin/page/home">首页管理</el-menu-item>
+          </el-submenu>
           <el-submenu index="admin/plugin">
             <div slot="title">
               <i class="el-icon-set-up"></i>
@@ -28,6 +40,13 @@ export default {
   name: 'admin',
   data() {
     return {}
+  },
+  methods: {
+    selectMenu(index) {
+      this.$router.replace({
+        path: index
+      })
+    }
   }
 }
 </script>
