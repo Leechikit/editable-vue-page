@@ -1,15 +1,13 @@
 <template>
   <div class="project">
-    <el-card class="project-card">
-      <div
-        class="project-item"
-        v-for="(item, $index) in list"
-        :key="$index"
-        @click="clickHandle(item.id)"
-      >
-        {{ item.name }}
-      </div>
-    </el-card>
+    <div
+      class="project-item"
+      v-for="(item, $index) in list"
+      :key="$index"
+      @click="clickHandle(item.id)"
+    >
+      {{ item.name }}
+    </div>
   </div>
 </template>
 <script>
@@ -37,13 +35,9 @@ export default {
   }
 }
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .project {
   height: 100%;
-  &-card {
-    min-height: 100%;
-    overflow: hidden;
-  }
   &-item {
     display: flex;
     justify-content: center;

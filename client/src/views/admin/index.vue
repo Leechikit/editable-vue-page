@@ -30,7 +30,9 @@
         </el-menu>
       </el-aside>
       <el-main>
-        <router-view />
+        <el-card class="admin-card">
+          <router-view />
+        </el-card>
       </el-main>
     </el-container>
   </div>
@@ -50,7 +52,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 @import '~@/assets/styles/base.scss';
 .admin {
   background-color: $color-layout-border;
@@ -58,6 +60,9 @@ export default {
     min-height: 100vh;
   }
   &-menu {
+    height: 100%;
+  }
+  &-card {
     height: 100%;
   }
 }
