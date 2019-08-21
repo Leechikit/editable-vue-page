@@ -55,7 +55,7 @@ export default {
 <style lang="scss" scoped>
 @import '~@/assets/styles/base.scss';
 .admin {
-  background-color: $color-layout-border;
+  background-color: $color-background;
   &-container {
     min-height: 100vh;
   }

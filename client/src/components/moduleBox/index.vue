@@ -20,9 +20,9 @@ export default {
   padding: 0 20px;
   margin: 20px 0;
   .title {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 }
 </style>
