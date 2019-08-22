@@ -6,7 +6,7 @@
       :key="$index"
       @click="clickHandle(item.id)"
     >
-      {{ item.name }}
+      {{ item.cnName }}
     </div>
     <div class="plugin-item btn-create" @click="clickHandle('create')">
       <i class="el-icon-plus"></i>
@@ -14,19 +14,38 @@
   </div>
 </template>
 <script>
+import HTTP_PLUGIN from '@/api/plugin'
 export default {
   name: 'plugin',
   data() {
     return {
       list: [
         {
-          name: '测试组件',
-          id: '123'
+          cnName: '测试组件',
+          compId: '123'
         }
-      ]
+      ],
+      compType: this.$route.params.compType
     }
   },
+  watch: {
+    $route() {
+      this.compType = this.$route.params.compType
+      this.getData()
+    }
+  },
+  created() {
+    this.getData()
+  },
   methods: {
+    async getData() {
+      let result = await HTTP_PLUGIN.getList({
+        compType: this.compType
+      })
+      if (+result.code === 0) {
+        this.list = result.result
+      }
+    },
     clickHandle(compId) {
       this.$router.push({
         name: 'plugin/editor',

@@ -14,6 +14,6 @@ export default {
     return fetch('/delete', { controlkey })
   },
   getCodes() {
-    return fetch('/getCodes')
+    return fetch('/custom/getCodes')
   }
 }

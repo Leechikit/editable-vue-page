@@ -5,7 +5,7 @@
         <el-menu
           class="admin-menu"
           :default-openeds="['admin/page', 'admin/plugin']"
-          :default-active="$route.path.replace(/\/\d+$/, '')"
+          :default-active="$route.path.replace(/\/\d+$|\/create$/, '')"
           @select="selectMenu"
         >
           <el-submenu index="admin/page">

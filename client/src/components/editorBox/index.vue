@@ -70,10 +70,6 @@
           <pre
             class=" CodeMirror-line "
             role="presentation"
-          ><span role="presentation" style="padding-right: 0.1px;">    }</span></pre>
-          <pre
-            class=" CodeMirror-line "
-            role="presentation"
           ><span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">style</span><span class="cm-tag cm-bracket">&gt;</span></span></pre>
         </div>
         <!-- style标签 END -->
@@ -170,6 +166,7 @@ export default {
       position: absolute;
       top: 0;
       right: 0;
+      z-index: 6;
       padding: 3px 8px;
       font-size: 12px;
       color: #fff;

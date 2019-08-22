@@ -3,7 +3,7 @@ module.exports = {
   devServer: {
     port: 7777,
     proxy: {
-      '/custom': {
+      '/serve': {
         target: 'http://localhost:3000',
         changeOrigin: true
       }

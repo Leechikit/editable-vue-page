@@ -6,7 +6,7 @@ import { Message } from 'element-ui'
 // axios.defaults.baseURL = '/ctg-workflow' // 配置接口地址
 
 var instance = axios.create({
-  baseURL: '/custom',
+  baseURL: '/serve',
   timeout: 20000
 })
 
