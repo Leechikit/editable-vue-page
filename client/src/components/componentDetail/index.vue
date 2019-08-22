@@ -32,7 +32,7 @@ export default {
     },
     disabled: {
       type: Boolean,
-      default: () => true
+      default: () => false
     }
   },
   watch: {
@@ -47,6 +47,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .componentDetail {
-  width: 500px;
+  max-width: 500px;
 }
 </style>

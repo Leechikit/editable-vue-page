@@ -22,19 +22,14 @@ export default new Router({
           component: () => import('@/views/admin/page/home')
         },
         {
-          path: 'plugin/platform',
-          name: 'plugin/platform',
-          component: () => import('@/views/admin/plugin/platform')
+          path: 'plugin/:compType',
+          name: 'plugin',
+          component: () => import('@/views/admin/plugin')
         },
         {
-          path: 'plugin/project',
-          name: 'plugin/project',
-          component: () => import('@/views/admin/plugin/project')
-        },
-        {
-          path: 'plugin/project/:id',
-          name: 'plugin/project/editor',
-          component: () => import('@/views/admin/plugin/project/editor.vue')
+          path: 'plugin/:compType/:compId',
+          name: 'plugin/editor',
+          component: () => import('@/views/admin/plugin/editor.vue')
         }
       ]
     },

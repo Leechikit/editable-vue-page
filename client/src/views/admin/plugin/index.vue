@@ -1,18 +1,21 @@
 <template>
-  <div class="project">
+  <div class="plugin">
     <div
-      class="project-item"
+      class="plugin-item"
       v-for="(item, $index) in list"
       :key="$index"
       @click="clickHandle(item.id)"
     >
       {{ item.name }}
     </div>
+    <div class="plugin-item btn-create" @click="clickHandle('create')">
+      <i class="el-icon-plus"></i>
+    </div>
   </div>
 </template>
 <script>
 export default {
-  name: 'project',
+  name: 'plugin',
   data() {
     return {
       list: [
@@ -24,11 +27,11 @@ export default {
     }
   },
   methods: {
-    clickHandle(id) {
+    clickHandle(compId) {
       this.$router.push({
-        name: 'plugin/project/editor',
+        name: 'plugin/editor',
         params: {
-          id
+          compId
         }
       })
     }
@@ -36,16 +39,28 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.project {
+@import '~@/assets/styles/base';
+
+.plugin {
   height: 100%;
+  margin-right: -20px;
+  margin-bottom: -20px;
+  overflow: hidden;
   &-item {
+    float: left;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 200px;
+    width: 150px;
     height: 80px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    border: 1px solid $color-layout-border;
     cursor: pointer;
     background-color: #f1f1f1;
+  }
+  .btn-create {
+    font-size: 20px;
   }
 }
 </style>

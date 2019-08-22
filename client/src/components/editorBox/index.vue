@@ -1,6 +1,6 @@
 <template>
   <div class="editor">
-    <moduleBox title="VUE模板">
+    <moduleBox title="vue模板">
       <div class="editor-box">
         <!-- template标签 START -->
         <div class="editor-tag cm-s-default">
@@ -9,10 +9,13 @@
             role="presentation"
           ><span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">template</span><span class="cm-tag cm-bracket">&gt;</span></span></pre>
         </div>
-        <codemirror
-          v-model="value.template"
-          :options="editorOption.template"
-        ></codemirror>
+        <div class="editor-code">
+          <codemirror
+            v-model="value.template"
+            :options="editorOption.template"
+          ></codemirror>
+          <span class="editor-code-tips">PC端vue模板</span>
+        </div>
         <div class="editor-tag cm-s-default">
           <pre
             class="CodeMirror-line cm-s-default"
@@ -31,10 +34,13 @@
             role="presentation"
           ><span role="presentation" style="padding-right: 0.1px;">    <span class="cm-keyword">export</span> <span class="cm-keyword">default</span> {</span></pre>
         </div>
-        <codemirror
-          v-model="value.script"
-          :options="editorOption.script"
-        ></codemirror>
+        <div class="editor-code">
+          <codemirror
+            v-model="value.script"
+            :options="editorOption.script"
+          ></codemirror>
+          <span class="editor-code-tips">PC端vue模板</span>
+        </div>
         <div class="editor-tag cm-s-default">
           <pre
             class=" CodeMirror-line "
@@ -53,10 +59,13 @@
             role="presentation"
           ><span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">style</span>  <span class="cm-attribute">lang</span>=<span class="cm-string">"scss"</span> <span class="cm-attribute">scoped</span><span class="cm-tag cm-bracket">&gt;</span></span></pre>
         </div>
-        <codemirror
-          v-model="value.style"
-          :options="editorOption.style"
-        ></codemirror>
+        <div class="editor-code">
+          <codemirror
+            v-model="value.style"
+            :options="editorOption.style"
+          ></codemirror>
+          <span class="editor-code-tips">PC端vue模板</span>
+        </div>
         <div class="editor-tag cm-s-default">
           <pre
             class=" CodeMirror-line "
@@ -153,6 +162,18 @@ export default {
     pre {
       font-family: inherit;
       margin: 0;
+    }
+  }
+  &-code {
+    position: relative;
+    &-tips {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 3px 8px;
+      font-size: 12px;
+      color: #fff;
+      background-color: $color-main;
     }
   }
 }

@@ -1,9 +1,13 @@
 <template>
   <div class="editor">
-    <componentDetail v-model="name"></componentDetail>
+    <componentDetail
+      v-model="name"
+      :disabled="type !== 'create'"
+    ></componentDetail>
     <editorbox v-model="code"></editorbox>
     <div class="button-list">
       <el-button type="primary" @click="save">保存</el-button>
+      <el-button @click="cancel">取消</el-button>
     </div>
   </div>
 </template>
@@ -18,6 +22,8 @@ export default {
   },
   data() {
     return {
+      componentId: this.$route.params.compId,
+      type: 'edit', // 表单类型 edit-编辑 create-创建
       name: {
         enName: '',
         cnName: ''
@@ -29,10 +35,18 @@ export default {
       }
     }
   },
+  created() {
+    if (this.componentId === 'create') {
+      this.type = 'create'
+    }
+  },
   methods: {
     save() {
       console.log(this.name)
       console.log(this.code)
+    },
+    cancel() {
+      this.$router.back()
     }
   }
 }
