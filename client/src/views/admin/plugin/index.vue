@@ -1,5 +1,5 @@
 <template>
-  <div class="plugin">
+  <div class="plugin" v-loading="loading">
     <div
       class="plugin-item"
       v-for="(item, $index) in list"
@@ -8,7 +8,11 @@
     >
       {{ item.cnName }}
     </div>
-    <div class="plugin-item btn-create" @click="clickHandle('create')">
+    <div
+      v-if="compType !== 'platform'"
+      class="plugin-item btn-create"
+      @click="clickHandle('create')"
+    >
       <i class="el-icon-plus"></i>
     </div>
   </div>
@@ -19,29 +23,32 @@ export default {
   name: 'plugin',
   data() {
     return {
-      list: [
-        {
-          cnName: '测试组件',
-          compId: '123'
-        }
-      ],
-      compType: this.$route.params.compType
+      list: [],
+      compType: this.$route.params.compType,
+      loading: false
     }
   },
   watch: {
     $route() {
       this.compType = this.$route.params.compType
+      this.resetData()
       this.getData()
     }
   },
   created() {
+    this.resetData()
     this.getData()
   },
   methods: {
+    resetData() {
+      this.list = []
+    },
     async getData() {
+      this.loading = true
       let result = await HTTP_PLUGIN.getList({
         compType: this.compType
       })
+      this.loading = false
       if (+result.code === 0) {
         this.list = result.result
       }

@@ -1,9 +1,5 @@
-module.exports = [
-  {
-    cnName: "任务数量展示模块",
-    enName: "taskListModule",
-    id: "1",
-    template: `<div class="app-list-box">
+<template>
+<div class="app-list-box">
   <div
     v-for="(item, index) in showWorkApp"
     :key="index"
@@ -24,8 +20,11 @@ module.exports = [
       > -->
     </div>
   </div>
-</div>`,
-    script: `// components: { CountTo },
+</div>
+</template>
+<script>
+export default {
+// components: { CountTo },
 data() {
   return {
     showWorkApp: [{
@@ -41,8 +40,11 @@ methods: {
   toTaskMyWork(task) {
     console.log(task)
   }
-}`,
-    style: `.app-list-box {
+}
+}
+</script>
+<style  lang="scss" scoped>
+.app-list-box {
   .app-list {
     width: 300px;
     height: 200px;
@@ -51,6 +53,5 @@ methods: {
     }
   }
 }
-`
-  }
-];
+
+</style>

@@ -43,10 +43,22 @@ export default {
     if (this.compId === 'create') {
       this.type = 'create'
     } else {
+      this.resetData()
       this.getData()
     }
   },
   methods: {
+    resetData() {
+      this.name = {
+        enName: '',
+        cnName: ''
+      }
+      this.code = {
+        template: '',
+        script: '',
+        style: ''
+      }
+    },
     async getData() {
       this.loading = true
       let result = await HTTP_PLUGIN.getCode({
@@ -63,6 +75,12 @@ export default {
       }
     },
     save() {
+      HTTP_PLUGIN.save({
+        compId: this.compId,
+        compType: this.compType,
+        name: this.name,
+        code: this.code
+      })
       console.log(this.name)
       console.log(this.code)
     },
