@@ -31,10 +31,17 @@ router.post('/get', async (ctx, next) => {
   if (plugin) {
     shell.cd(path.join(ROOTDIR, 'serve', 'resources', compType))
     if (fs.existsSync(`${plugin.enName}/vue/${plugin.enName}.vue`)) {
-      let file = fs.readFileSync(`${plugin.enName}/vue/${plugin.enName}.vue`, 'utf8')
+      let file = fs.readFileSync(
+        `${plugin.enName}/vue/${plugin.enName}.vue`,
+        'utf8'
+      )
       let template = /<template>\s+([\s\S]*)\s+<\/template>/.exec(file)
-      let script = /<script>\s?export default {\s+([\s\S]*)\s+}\s?<\/script>/.exec(file)
-      let style = /<style lang="scss" scoped>\s+([\s\S]*)\s+<\/style>/.exec(file)
+      let script = /<script>\s?export default {\s+([\s\S]*)\s+}\s?<\/script>/.exec(
+        file
+      )
+      let style = /<style lang="scss" scoped>\s+([\s\S]*)\s+<\/style>/.exec(
+        file
+      )
       result.code = 0
       result.result = {
         cnName: plugin.cnName,
@@ -55,6 +62,31 @@ router.post('/get', async (ctx, next) => {
 router.post('/save', async (ctx, next) => {
   try {
     const { compId, compType, name, code } = ctx.request.body
+    // 没传compId，为添加
+    if (compId === void 0) {
+      const configPath = path.join(
+        ROOTDIR,
+        'serve',
+        'public',
+        'javascripts',
+        `plugin-${compType}.js`
+      )
+      let pluginList = []
+      if (compType === 'project') {
+        pluginList = projectList
+      }
+      if (pluginList.find(item => item.enName === name.enName)) {
+        throw new Error('该组件英文名称已存在')
+      }
+      pluginList.push({
+        id: pluginList.length + 1 + '',
+        enName: name.enName,
+        cnName: name.cnName
+      })
+      shell
+        .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
+        .to(configPath)
+    }
     const sourcePath = path.join(ROOTDIR, 'source')
     // 写入element-id
     shell.cd(path.join(sourcePath, 'src'))
@@ -102,6 +134,7 @@ ${code.style}
       shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
       shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
       shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
+
       ctx.response.body = { code: 0, msg: '保存成功' }
     }
   } catch (error) {

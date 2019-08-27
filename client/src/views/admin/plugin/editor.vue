@@ -80,7 +80,7 @@ export default {
     save() {
       this.saveLoading = true
       HTTP_PLUGIN.save({
-        compId: this.compId,
+        compId: this.compId === 'create' ? void 0 : this.compId,
         compType: this.compType,
         name: this.name,
         code: this.code
