@@ -6,7 +6,9 @@
     ></componentDetail>
     <editorbox v-model="code"></editorbox>
     <div class="button-list">
-      <el-button type="primary" @click="save">保存</el-button>
+      <el-button type="primary" :loading="saveLoading" @click="save"
+        >保存</el-button
+      >
       <el-button @click="cancel">取消</el-button>
     </div>
   </div>
@@ -28,6 +30,7 @@ export default {
       compType: this.$route.params.compType,
       type: 'edit', // 表单类型 edit-编辑 create-创建
       loading: false,
+      saveLoading: false,
       name: {
         enName: '',
         cnName: ''
@@ -75,11 +78,14 @@ export default {
       }
     },
     save() {
+      this.saveLoading = true
       HTTP_PLUGIN.save({
         compId: this.compId,
         compType: this.compType,
         name: this.name,
         code: this.code
+      }).finally(() => {
+        this.saveLoading = false
       })
       console.log(this.name)
       console.log(this.code)

@@ -49,7 +49,7 @@ methods: {
     width: 300px;
     height: 200px;
     .name {
-		color: green;
+		color: blue;
     }
   }
 }

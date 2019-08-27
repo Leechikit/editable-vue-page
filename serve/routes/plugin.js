@@ -38,7 +38,12 @@ router.post('/save', async (ctx, next) => {
     // 写入element-id
     shell.cd(path.join(sourcePath, 'src'))
     shell
-      .ShellString(`exports.elementId = '${cryptoRandomString({ length: 10, characters: 'qwertyuiopasdfghjklzxcvbnm' })}'`)
+      .ShellString(
+        `exports.elementId = '${cryptoRandomString({
+          length: 10,
+          characters: 'qwertyuiopasdfghjklzxcvbnm'
+        })}'`
+      )
       .to('element-id.js')
     // 写入单个.vue文件
     shell.cd(path.join(sourcePath, 'src/components'))
@@ -60,6 +65,20 @@ ${code.style}
       shell.echo('Error: Git commit failed') //输出内容
       shell.exit(1) //退出
     } else {
+      shell.cd(path.join(shell.pwd().stdout, '../serve/resources', compType))
+      if (fs.existsSync(name.enName)) {
+        shell.rm('-rf', name.enName)
+      }
+      shell.mkdir(name.enName, `${name.enName}/dist`, `${name.enName}/vue`)
+      const distTargetDir = path.join(shell.pwd().stdout, name.enName, 'dist')
+      const vueTargetDir = path.join(shell.pwd().stdout, name.enName, 'vue')
+      const jsDir = path.join(sourcePath, 'dist', 'js')
+      const cssDir = path.join(sourcePath, 'dist', 'css')
+      const vueDir = path.join(sourcePath, 'src', 'components')
+      shell.cp('-Rf', `${jsDir}/*.js`, distTargetDir)
+      shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
+      shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
+      shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
       ctx.response.body = { code: 0, msg: '保存成功' }
     }
   } catch (error) {
