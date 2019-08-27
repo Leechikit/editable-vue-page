@@ -43,13 +43,13 @@ methods: {
 }
 }
 </script>
-<style  lang="scss" scoped>
+<style lang="scss" scoped>
 .app-list-box {
   .app-list {
     width: 300px;
     height: 200px;
     .name {
-		color: blue;
+		color: yellow;
     }
   }
 }
