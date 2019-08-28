@@ -3,6 +3,7 @@ const shell = require('shelljs')
 const fs = require('fs')
 const path = require('path')
 const cryptoRandomString = require('crypto-random-string')
+const { exec } = require('child_process')
 const platformList = require('../public/javascripts/plugin-platform')
 const projectList = require('../public/javascripts/plugin-project')
 const ROOTDIR = path.join(process.cwd(), '..')
@@ -62,33 +63,41 @@ router.post('/get', async (ctx, next) => {
 router.post('/save', async (ctx, next) => {
   try {
     const { compId, compType, name, code } = ctx.request.body
+    const configPath = path.join(
+      ROOTDIR,
+      'serve',
+      'public',
+      'javascripts',
+      `plugin-${compType}.js`
+    )
+    let pluginList = []
+    if (compType === 'project') {
+      pluginList = projectList
+    }
     // 没传compId，为添加
     if (compId === void 0) {
-      const configPath = path.join(
-        ROOTDIR,
-        'serve',
-        'public',
-        'javascripts',
-        `plugin-${compType}.js`
-      )
-      let pluginList = []
-      if (compType === 'project') {
-        pluginList = projectList
-      }
       if (pluginList.find(item => item.enName === name.enName)) {
         throw new Error('该组件英文名称已存在')
       }
       pluginList.push({
         id: pluginList.length + 1 + '',
         enName: name.enName,
-        cnName: name.cnName
+        cnName: name.cnName,
+        complete: false
       })
-      shell
-        .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
-        .to(configPath)
+    } else {
+      let curPlugin = pluginList.find(item => item.enName === name.enName)
+      if (!curPlugin) {
+        throw new Error('该组件不存在')
+      }
+      curPlugin.complete = false
     }
-    const sourcePath = path.join(ROOTDIR, 'source')
+    shell
+      .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
+      .to(configPath)
+
     // 写入element-id
+    const sourcePath = path.join(ROOTDIR, 'source')
     shell.cd(path.join(sourcePath, 'src'))
     shell
       .ShellString(
@@ -98,6 +107,7 @@ router.post('/save', async (ctx, next) => {
         })}'`
       )
       .to('element-id.js')
+
     // 写入单个.vue文件
     shell.cd(path.join(sourcePath, 'src/components'))
     const vueStr = `<template>
@@ -112,15 +122,18 @@ ${code.script}
 ${code.style}
 </style>`
     shell.ShellString(vueStr).to(`${name.enName}.vue`)
-    shell.cd(sourcePath)
-    // 编译
-    if (shell.exec('npm run build').code !== 0) {
-      shell.echo('Error: Git commit failed') //输出内容
-      shell.exit(1) //退出
-    } else {
+    ctx.response.body = { code: 0, msg: '保存成功' }
+
+    // 子进程编译
+    exec('npm run build', { cwd: sourcePath }, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`编译失败: ${error}`)
+        return
+      }
       // 拷贝
       const targetDir = path.join(ROOTDIR, 'serve', 'resources', compType)
       shell.cd(targetDir)
+      shell.chmod(777, targetDir)
       if (fs.existsSync(name.enName)) {
         shell.rm('-rf', name.enName)
       }
@@ -135,8 +148,13 @@ ${code.style}
       shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
       shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
 
-      ctx.response.body = { code: 0, msg: '保存成功' }
-    }
+      // 写入构建完成状态
+      let curPlugin = pluginList.find(item => item.enName === name.enName)
+      curPlugin.complete = true
+      shell
+        .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
+        .to(configPath)
+    })
   } catch (error) {
     console.log(error)
     ctx.response.body = { code: -1, msg: '保存失败' }
