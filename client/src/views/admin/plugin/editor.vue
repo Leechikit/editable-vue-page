@@ -43,6 +43,11 @@ export default {
     }
   },
   created() {
+    HTTP_PLUGIN.getCode({
+      compId: this.compId,
+      compType: this.compType,
+      fileName: 'app.js'
+    })
     if (this.compId === 'create') {
       this.type = 'create'
     } else {
@@ -64,7 +69,7 @@ export default {
     },
     async getData() {
       this.loading = true
-      let result = await HTTP_PLUGIN.getCode({
+      let result = await HTTP_PLUGIN.getDetail({
         compId: this.compId,
         compType: this.compType
       })

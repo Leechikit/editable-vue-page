@@ -161,9 +161,41 @@ ${code.style}
   }
 })
 
-router.get('/json', async (ctx, next) => {
-  ctx.body = {
-    title: 'koa2 json'
+router.get('/getcode', async (ctx, next) => {
+  const { compId, compType, fileName } = ctx.query
+  const reg = new RegExp(
+    `${fileName.split('.')[0]}.\\S+.${fileName.split('.')[1]}`
+  )
+  let plugin = null
+  if (compType === 'platform' && platformList !== void 0) {
+    plugin = platformList.find(item => item.id === compId)
+  } else if (compType === 'project' && projectList !== void 0) {
+    plugin = projectList.find(item => item.id === compId)
+  }
+  if (plugin) {
+    const targetDir = path.join(ROOTDIR, 'serve', 'resources', compType)
+    shell.cd(targetDir)
+    if (fs.existsSync(`${plugin.enName}/dist`)) {
+      let matchFileName = null
+      let fileList = fs.readdirSync(`${plugin.enName}/dist`)
+      for (let i = 0, len = fileList.length; i < len; i++) {
+        if (reg.test(fileList[i])) {
+          matchFileName = fileList[i]
+          break
+        }
+      }
+      if (matchFileName) {
+        let result = shell.cat(path.join(targetDir, plugin.enName, 'dist', matchFileName))
+        console.log(result)
+        ctx.response.body = result
+      } else {
+        ctx.response.body = { code: -1, msg: '未找到该文件' }
+      }
+    } else {
+      ctx.response.body = { code: -2, msg: '该组件未构建' }
+    }
+  } else {
+    ctx.response.body = { code: -3, msg: '未找到该组件' }
   }
 })
 
