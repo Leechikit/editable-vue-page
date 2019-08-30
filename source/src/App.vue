@@ -1,11 +1,8 @@
 <template>
-  <div :id="elementId">
-    <component v-for="item in componentName" :key="item" :is="item"></component>
-  </div>
+  <component :is="componentName"></component>
 </template>
 
 <script>
-import { elementId } from '@/element-id'
 let controls = require.context('./components/', true, /.*\.vue$/)
 let components = {}
 controls.keys().forEach(key => {
@@ -13,14 +10,12 @@ controls.keys().forEach(key => {
   components[control.default.name] = control.default
 })
 export default {
-  name: elementId,
   components: {
     ...components
   },
   data() {
     return {
-      elementId,
-      componentName: Object.keys(components)
+      componentName: Object.keys(components)[0]
     }
   }
 }

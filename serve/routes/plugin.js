@@ -2,7 +2,6 @@ const router = require('koa-router')()
 const shell = require('shelljs')
 const fs = require('fs')
 const path = require('path')
-const cryptoRandomString = require('crypto-random-string')
 const { exec } = require('child_process')
 const platformList = require('../public/javascripts/plugin-platform')
 const projectList = require('../public/javascripts/plugin-project')
@@ -113,10 +112,7 @@ router.post('/save', async (ctx, next) => {
         shell.cd(path.join(sourcePath, 'src'))
         shell
           .ShellString(
-            `exports.elementId = '${cryptoRandomString({
-              length: 10,
-              characters: 'qwertyuiopasdfghjklzxcvbnm'
-            })}'`
+            `exports.elementId = '${name.enName}'`
           )
           .to('element-id.js')
 
