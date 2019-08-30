@@ -1,7 +1,1 @@
-module.exports = [
-  {
-    cnName: '任务数量展示模块',
-    enName: 'taskListModule',
-    id: '1'
-  }
-]
+module.exports = [{"cnName":"任务数量展示模块","enName":"taskListModule","id":"1","complete":true,"cssLink":"http://localhost:3000/serve/plugin/getcode?compId=1&compType=platform&fileName=app.css","jsLink":"http://localhost:3000/serve/plugin/getcode?compId=1&compType=platform&fileName=app.js","chunkJsLink":"http://localhost:3000/serve/plugin/getcode?compId=1&compType=platform&fileName=chunk-vendors.js"}]

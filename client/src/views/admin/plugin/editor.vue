@@ -43,11 +43,6 @@ export default {
     }
   },
   created() {
-    HTTP_PLUGIN.getCode({
-      compId: this.compId,
-      compType: this.compType,
-      fileName: 'app.js'
-    })
     if (this.compId === 'create') {
       this.type = 'create'
     } else {

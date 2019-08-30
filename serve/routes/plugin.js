@@ -73,6 +73,8 @@ router.post('/save', async (ctx, next) => {
     let pluginList = []
     if (compType === 'project') {
       pluginList = projectList
+    } else if (compType === 'platform') {
+      pluginList = platformList
     }
     // 没传compId，为添加
     if (compId === void 0) {
@@ -83,7 +85,13 @@ router.post('/save', async (ctx, next) => {
         id: pluginList.length + 1 + '',
         enName: name.enName,
         cnName: name.cnName,
-        complete: false
+        complete: false,
+        cssLink: `http://localhost:3000/serve/plugin/getcode?compId=${pluginList.length +
+          1}&compType=${compType}&fileName=app.css`,
+        jsLink: `http://localhost:3000/serve/plugin/getcode?compId=${pluginList.length +
+          1}&compType=${compType}&fileName=app.js`,
+        chunkJsLink: `http://localhost:3000/serve/plugin/getcode?compId=${pluginList.length +
+          1}&compType=${compType}&fileName=chunk-vendors.js`
       })
     } else {
       let curPlugin = pluginList.find(item => item.enName === name.enName)
@@ -185,8 +193,9 @@ router.get('/getcode', async (ctx, next) => {
         }
       }
       if (matchFileName) {
-        let result = shell.cat(path.join(targetDir, plugin.enName, 'dist', matchFileName))
-        console.log(result)
+        let result = shell.cat(
+          path.join(targetDir, plugin.enName, 'dist', matchFileName)
+        )
         ctx.response.body = result
       } else {
         ctx.response.body = { code: -1, msg: '未找到该文件' }

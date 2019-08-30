@@ -1,13 +1,11 @@
 <template>
-<div class="test2"></div>
+<div class="test">123<div>
 </template>
 <script>
 export default {
-name: 'test2'
+name: 'test'
 }
 </script>
 <style lang="scss" scoped>
-.test2{
-  color: blue;
-}
+.test {}
 </style>
