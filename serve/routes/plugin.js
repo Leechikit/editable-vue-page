@@ -7,6 +7,7 @@ const { exec } = require('child_process')
 const platformList = require('../public/javascripts/plugin-platform')
 const projectList = require('../public/javascripts/plugin-project')
 const ROOTDIR = path.join(process.cwd(), '..')
+let promiseList = Promise.resolve()
 router.prefix('/serve/plugin')
 
 router.post('/list', async (ctx, next) => {
@@ -48,9 +49,9 @@ router.post('/get', async (ctx, next) => {
         cnName: plugin.cnName,
         enName: plugin.enName,
         id: plugin.id,
-        template: template && template[1],
-        script: script && script[1],
-        style: style && style[1]
+        template: (template && template[1]) || '',
+        script: (script && script[1]) || '',
+        style: (style && style[1]) || ''
       }
     }
   } else {
@@ -103,22 +104,26 @@ router.post('/save', async (ctx, next) => {
     shell
       .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
       .to(configPath)
+    ctx.response.body = { code: 0, msg: '保存成功' }
 
-    // 写入element-id
-    const sourcePath = path.join(ROOTDIR, 'source')
-    shell.cd(path.join(sourcePath, 'src'))
-    shell
-      .ShellString(
-        `exports.elementId = '${cryptoRandomString({
-          length: 10,
-          characters: 'qwertyuiopasdfghjklzxcvbnm'
-        })}'`
-      )
-      .to('element-id.js')
+    promiseList = promiseList.then(() => {
+      return new Promise((resolve, reject) => {
+        // 写入element-id
+        const sourcePath = path.join(ROOTDIR, 'source')
+        shell.cd(path.join(sourcePath, 'src'))
+        shell
+          .ShellString(
+            `exports.elementId = '${cryptoRandomString({
+              length: 10,
+              characters: 'qwertyuiopasdfghjklzxcvbnm'
+            })}'`
+          )
+          .to('element-id.js')
 
-    // 写入单个.vue文件
-    shell.cd(path.join(sourcePath, 'src/components'))
-    const vueStr = `<template>
+        // 写入单个.vue文件
+        shell.rm(path.join(sourcePath, 'src/components/*'))
+        shell.cd(path.join(sourcePath, 'src/components'))
+        const vueStr = `<template>
 ${code.template}
 </template>
 <script>
@@ -129,39 +134,41 @@ ${code.script}
 <style lang="scss" scoped>
 ${code.style}
 </style>`
-    shell.ShellString(vueStr).to(`${name.enName}.vue`)
-    ctx.response.body = { code: 0, msg: '保存成功' }
+        shell.ShellString(vueStr).to(`${name.enName}.vue`)
 
-    // 子进程编译
-    exec('npm run build', { cwd: sourcePath }, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`编译失败: ${error}`)
-        return
-      }
-      // 拷贝
-      const targetDir = path.join(ROOTDIR, 'serve', 'resources', compType)
-      shell.cd(targetDir)
-      shell.chmod(777, targetDir)
-      if (fs.existsSync(name.enName)) {
-        shell.rm('-rf', name.enName)
-      }
-      shell.mkdir(name.enName, `${name.enName}/dist`, `${name.enName}/vue`)
-      const distTargetDir = path.join(targetDir, name.enName, 'dist')
-      const vueTargetDir = path.join(targetDir, name.enName, 'vue')
-      const jsDir = path.join(sourcePath, 'dist', 'js')
-      const cssDir = path.join(sourcePath, 'dist', 'css')
-      const vueDir = path.join(sourcePath, 'src', 'components')
-      shell.cp('-Rf', `${jsDir}/*.js`, distTargetDir)
-      shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
-      shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
-      shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
+        // 子进程编译
+        exec('npm run build', { cwd: sourcePath }, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`编译失败: ${error}`)
+            return reject()
+          }
+          // 拷贝
+          const targetDir = path.join(ROOTDIR, 'serve', 'resources', compType)
+          shell.cd(targetDir)
+          shell.chmod(777, targetDir)
+          if (fs.existsSync(name.enName)) {
+            shell.rm('-rf', name.enName)
+          }
+          shell.mkdir(name.enName, `${name.enName}/dist`, `${name.enName}/vue`)
+          const distTargetDir = path.join(targetDir, name.enName, 'dist')
+          const vueTargetDir = path.join(targetDir, name.enName, 'vue')
+          const jsDir = path.join(sourcePath, 'dist', 'js')
+          const cssDir = path.join(sourcePath, 'dist', 'css')
+          const vueDir = path.join(sourcePath, 'src', 'components')
+          shell.cp('-Rf', `${jsDir}/*.js`, distTargetDir)
+          shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
+          shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
+          shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
 
-      // 写入构建完成状态
-      let curPlugin = pluginList.find(item => item.enName === name.enName)
-      curPlugin.complete = true
-      shell
-        .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
-        .to(configPath)
+          // 写入构建完成状态
+          let curPlugin = pluginList.find(item => item.enName === name.enName)
+          curPlugin.complete = true
+          shell
+            .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
+            .to(configPath)
+          resolve()
+        })
+      })
     })
   } catch (error) {
     console.log(error)
@@ -193,7 +200,7 @@ router.get('/getcode', async (ctx, next) => {
         }
       }
       if (matchFileName) {
-        let result = shell.cat(
+        let result = fs.readFileSync(
           path.join(targetDir, plugin.enName, 'dist', matchFileName)
         )
         ctx.response.body = result

@@ -1,5 +1,5 @@
 <template>
-<div class="app-list-box">
+<div class="taskListModule">
   <div
     v-for="(item, index) in showWorkApp"
     :key="index"
@@ -44,7 +44,8 @@ methods: {
 }
 </script>
 <style lang="scss" scoped>
-.app-list-box {
+.taskListModule {
+  width: 100%;
   .app-list {
     width: 300px;
     height: 200px;
