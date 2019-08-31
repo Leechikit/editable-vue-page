@@ -1,1 +1,1 @@
-module.exports = []
+module.exports = [{"id":"1","enName":"home","cnName":"首页","complete":true,"cssLink":"http://localhost:3000/serve/page/getcode?pageId=1&fileName=app.css","jsLink":"http://localhost:3000/serve/page/getcode?pageId=1&fileName=app.js","chunkJsLink":"http://localhost:3000/serve/page/getcode?pageId=1&fileName=chunk-vendors.js"}]

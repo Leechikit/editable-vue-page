@@ -44,7 +44,7 @@ router.post('/save', async (ctx, next) => {
       'serve',
       'public',
       'javascripts',
-      `plugin-${compType}.js`
+      'page.js'
     )
     // 没传compId，为添加
     if (pageId === void 0) {
