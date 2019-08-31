@@ -17,9 +17,9 @@ export default new Router({
       component: () => import('@/views/admin'),
       children: [
         {
-          path: 'page/home',
-          name: 'page/home',
-          component: () => import('@/views/admin/page/home')
+          path: 'page/:pageId',
+          name: 'page/editor',
+          component: () => import('@/views/admin/page')
         },
         {
           path: 'plugin/:compType',

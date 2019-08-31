@@ -10,6 +10,7 @@ const index = require('./routes/index')
 const users = require('./routes/users')
 const custom = require('./routes/custom')
 const plugin = require('./routes/plugin')
+const page = require('./routes/page')
 
 // error handler
 onerror(app)
@@ -39,6 +40,7 @@ app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
 app.use(custom.routes(), custom.allowedMethods())
 app.use(plugin.routes(), plugin.allowedMethods())
+app.use(page.routes(), page.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
