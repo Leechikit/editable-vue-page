@@ -21,7 +21,7 @@
             <el-menu-item
               v-for="item in pageList"
               :key="item.id"
-              :index="`/admin/page/${item.enName}`"
+              :index="`/admin/page/${item.id}`"
               >首页管理</el-menu-item
             >
           </el-submenu>

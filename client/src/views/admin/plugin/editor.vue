@@ -43,10 +43,10 @@ export default {
     }
   },
   created() {
+    this.resetData()
     if (this.compId === 'create') {
       this.type = 'create'
     } else {
-      this.resetData()
       this.getData()
     }
   },

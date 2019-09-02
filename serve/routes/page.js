@@ -17,21 +17,33 @@ router.post('/get', async (ctx, next) => {
   const { pageId } = ctx.request.body
   let result = {}
   let page = pageList.find(item => item.id === pageId)
-  shell.cd(path.join(ROOTDIR, 'serve', 'resources', 'page'))
-  if (fs.existsSync(`${page.enName}/vue/${page.enName}.vue`)) {
-    let file = fs.readFileSync(`${page.enName}/vue/${page.enName}.vue`, 'utf8')
-    let template = /<template>\s+([\s\S]*)\s+<\/template>/.exec(file)
-    let script = /<script>\s?export default {\s+([\s\S]*)\s+}\s?<\/script>/.exec(
-      file
-    )
-    let style = /<style lang="scss" scoped>\s+([\s\S]*)\s+<\/style>/.exec(file)
-    result.code = 0
-    result.result = {
-      name: page.enName,
-      template: (template && template[1]) || '',
-      script: (script && script[1]) || '',
-      style: (style && style[1]) || ''
+  if (page) {
+    shell.cd(path.join(ROOTDIR, 'serve', 'resources', 'page'))
+    if (fs.existsSync(`${page.enName}/vue/${page.enName}.vue`)) {
+      let file = fs.readFileSync(
+        `${page.enName}/vue/${page.enName}.vue`,
+        'utf8'
+      )
+      let template = /<template>\s+([\s\S]*)\s+<\/template>/.exec(file)
+      let script = /<script>\s?export default {\s+([\s\S]*)\s+}\s?<\/script>/.exec(
+        file
+      )
+      let style = /<style lang="scss" scoped>\s+([\s\S]*)\s+<\/style>/.exec(
+        file
+      )
+      result.code = 0
+      result.result = {
+        cnName: page.cnName,
+        enName: page.enName,
+        id: page.id,
+        template: (template && template[1]) || '',
+        script: (script && script[1]) || '',
+        style: (style && style[1]) || ''
+      }
     }
+  } else {
+    result.code = -1
+    result.msg = '暂无数据'
   }
   ctx.response.body = result
 })

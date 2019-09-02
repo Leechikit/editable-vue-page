@@ -41,11 +41,23 @@ export default {
       }
     }
   },
+  watch: {
+    $route() {
+      this.pageId = this.$route.params.pageId
+      this.resetData()
+      if (this.pageId === 'create') {
+        this.type = 'create'
+      } else {
+        this.type = 'edit'
+        this.getData()
+      }
+    }
+  },
   created() {
+    this.resetData()
     if (this.pageId === 'create') {
       this.type = 'create'
     } else {
-      this.resetData()
       this.getData()
     }
   },
@@ -64,8 +76,7 @@ export default {
     async getData() {
       this.loading = true
       let result = await HTTP_PAGE.getDetail({
-        compId: this.compId,
-        compType: this.compType
+        pageId: this.pageId
       })
       this.loading = false
       if (+result.code === 0) {
