@@ -2,6 +2,7 @@
   <div class="editor" v-loading="loading">
     <componentDetail
       v-model="name"
+      prefix="页面"
       :disabled="type !== 'create'"
     ></componentDetail>
     <editorbox v-model="code"></editorbox>
@@ -90,15 +91,12 @@ export default {
     save() {
       this.saveLoading = true
       HTTP_PAGE.save({
-        compId: this.compId === 'create' ? void 0 : this.compId,
-        compType: this.compType,
+        pageId: this.compId === 'create' ? void 0 : this.pageId,
         name: this.name,
         code: this.code
       }).finally(() => {
         this.saveLoading = false
       })
-      console.log(this.name)
-      console.log(this.code)
     },
     cancel() {
       this.$router.back()

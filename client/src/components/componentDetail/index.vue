@@ -1,11 +1,11 @@
 <template>
   <div class="componentDetail">
-    <moduleBox title="组件名称">
+    <moduleBox :title="`${prefix}名称`">
       <el-form :model="value" label-width="100px">
-        <el-form-item label="组件中文名称">
+        <el-form-item :label="`${prefix}中文名称`">
           <el-input v-model="value.cnName" :disabled="disabled"></el-input>
         </el-form-item>
-        <el-form-item label="组件英文名称">
+        <el-form-item :label="`${prefix}英文名称`">
           <el-input v-model="value.enName" :disabled="disabled"></el-input>
         </el-form-item>
       </el-form>
@@ -29,6 +29,10 @@ export default {
           cnName: ''
         }
       }
+    },
+    prefix: {
+      type: String,
+      default: '组件'
     },
     disabled: {
       type: Boolean,
