@@ -1,0 +1,1 @@
+{name:"test",created:function(){console.log(this.$store.state.userInfo)}}

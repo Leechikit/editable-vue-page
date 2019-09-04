@@ -36,11 +36,11 @@ router.post('/get', async (ctx, next) => {
         `${plugin.enName}/vue/${plugin.enName}.vue`,
         'utf8'
       )
-      let template = /<template>\s+([\s\S]*)\s+<\/template>/.exec(file)
-      let script = /<script>\s?export default {\s+([\s\S]*)\s+}\s?<\/script>/.exec(
+      let template = /<template>\s*([\s\S]*)\s*<\/template>/.exec(file)
+      let script = /<script>\s?export default {\s*([\s\S]*)\s*}\s?<\/script>/.exec(
         file
       )
-      let style = /<style lang="scss" scoped>\s+([\s\S]*)\s+<\/style>/.exec(
+      let style = /<style lang="scss" scoped>\s*([\s\S]*)\s*<\/style>/.exec(
         file
       )
       result.code = 0
@@ -121,9 +121,8 @@ ${code.style}
         // 写入js文件
         shell.cd(path.join(sourcePath, 'src/javascript'))
         const javascriptStr = `exports.exportJavascript = {
-${code.template}
-        }
-        `
+${code.script}
+}`
         shell.ShellString(javascriptStr).to('index.js')
 
         // 写入scss文件
@@ -148,7 +147,12 @@ ${code.template}
           const vueTargetDir = path.join(targetDir, name.enName, 'vue')
           const distDir = path.join(sourcePath, 'dist')
           const vueDir = path.join(sourcePath, 'src', 'vue')
-          shell.cp('-Rf', `${distDir}/*.js`, distTargetDir)
+          let jsCode = fs.readFileSync(
+            path.join(distDir, 'index.js')
+          )
+          let matchJsCode = /exportJavascript\s*=\s*({[\s\S]*})\s*}\s*,\s*\/\*/.exec(jsCode)
+          shell.ShellString((matchJsCode && matchJsCode[1]) || '').to(path.join(distTargetDir,'index.js'))
+          // shell.cp('-Rf', `${distDir}/*.js`, distTargetDir)
           shell.cp('-Rf', `${distDir}/*.css`, distTargetDir)
           shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
 
@@ -189,7 +193,7 @@ router.post('/getcode', async (ctx, next) => {
       let jsCode = fs.readFileSync(
         path.join(targetDir, plugin.enName, 'dist', 'index.js')
       )
-      let matchJsCode = /eval\("exports.exportJavascript\s?=\s?([\s\S]*})/.exec(jsCode)
+      let matchJsCode = /exportJavascript\s*=\s*({[\s\S]*})\s*}\s*,\s*\/\*/.exec(jsCode)
       let cssCode = fs.readFileSync(
         path.join(targetDir, plugin.enName, 'dist', 'index.css')
       )
@@ -197,7 +201,7 @@ router.post('/getcode', async (ctx, next) => {
         path.join(targetDir, plugin.enName, 'vue', `${plugin.enName}.vue`),
         'utf8'
       )
-      let templateCode = /<template>\s+([\s\S]*)\s+<\/template>/.exec(vueCode)
+      let templateCode = /<template>\s*([\s\S]*)\s*<\/template>/.exec(vueCode)
       ctx.response.body = {code: 0, result: {
         javascript: (matchJsCode && matchJsCode[1]) || '',
         css: cssCode,

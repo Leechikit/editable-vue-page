@@ -11,6 +11,6 @@ created(){
 </script>
 <style lang="scss" scoped>
 .test{
-  color: yellow;
+  color: blue;
 }
 </style>

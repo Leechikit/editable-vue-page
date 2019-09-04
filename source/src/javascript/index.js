@@ -1,4 +1,6 @@
 exports.exportJavascript = {
-<div class="test">testb</div>
-        }
-        
+name: 'test',
+created(){
+	console.log(this.$store.state.userInfo)
+}
+}
