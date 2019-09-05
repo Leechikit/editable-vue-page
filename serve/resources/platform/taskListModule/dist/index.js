@@ -1,0 +1,1 @@
+{data:function(){return{showWorkApp:[{name:"测试应用",task:"test"}]}},created:function(){},methods:{toTaskMyWork:function(e){console.log(e)}}}

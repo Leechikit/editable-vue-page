@@ -9,7 +9,7 @@
   !*** ./src/javascript/index.js ***!
   \*********************************/
 /*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */function(e,t){t.exportJavascript={name:"test",created:function(){console.log(this.$store.state.userInfo)}}},
+/*! ModuleConcatenation bailout: Module is not an ECMAScript module */function(e,t){t.exportJavascript={name:"home"}},
 /*!******************************!*\
   !*** ./src/style/index.scss ***!
   \******************************/

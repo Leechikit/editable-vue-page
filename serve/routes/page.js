@@ -19,9 +19,9 @@ router.post('/get', async (ctx, next) => {
   let page = pageList.find(item => item.id === pageId)
   if (page) {
     shell.cd(path.join(ROOTDIR, 'serve', 'resources', 'page'))
-    if (fs.existsSync(`${page.enName}/vue/${page.enName}.vue`)) {
+    if (fs.existsSync(`${page.enName}/vue/index.vue`)) {
       let file = fs.readFileSync(
-        `${page.enName}/vue/${page.enName}.vue`,
+        `${page.enName}/vue/index.vue`,
         'utf8'
       )
       let template = /<template>\s+([\s\S]*)\s+<\/template>/.exec(file)
@@ -67,13 +67,7 @@ router.post('/save', async (ctx, next) => {
         id: pageList.length + 1 + '',
         enName: name.enName,
         cnName: name.cnName,
-        complete: false,
-        cssLink: `http://localhost:3000/serve/page/getcode?pageId=${pageList.length +
-          1}&fileName=app.css`,
-        jsLink: `http://localhost:3000/serve/page/getcode?pageId=${pageList.length +
-          1}&fileName=app.js`,
-        chunkJsLink: `http://localhost:3000/serve/page/getcode?pageId=${pageList.length +
-          1}&fileName=chunk-vendors.js`
+        complete: false
       })
     } else {
       let curPage = pageList.find(item => item.enName === name.enName)
@@ -89,16 +83,10 @@ router.post('/save', async (ctx, next) => {
 
     promiseList = promiseList.then(() => {
       return new Promise((resolve, reject) => {
-        // 写入element-id
         const sourcePath = path.join(ROOTDIR, 'source')
-        shell.cd(path.join(sourcePath, 'src'))
-        shell
-          .ShellString(`exports.elementId = '${name.enName}'`)
-          .to('element-id.js')
 
-        // 写入单个.vue文件
-        shell.rm(path.join(sourcePath, 'src/components/*'))
-        shell.cd(path.join(sourcePath, 'src/components'))
+        /// 写入单个.vue文件
+        shell.cd(path.join(sourcePath, 'src/vue'))
         const vueStr = `<template>
 ${code.template}
 </template>
@@ -110,7 +98,18 @@ ${code.script}
 <style lang="scss" scoped>
 ${code.style}
 </style>`
-        shell.ShellString(vueStr).to(`${name.enName}.vue`)
+        shell.ShellString(vueStr).to('index.vue')
+
+        // 写入js文件
+        shell.cd(path.join(sourcePath, 'src/javascript'))
+        const javascriptStr = `exports.exportJavascript = {
+${code.script}
+}`
+        shell.ShellString(javascriptStr).to('index.js')
+
+        // 写入scss文件
+        shell.cd(path.join(sourcePath, 'src/style'))
+        shell.ShellString(code.style).to('index.scss')
 
         // 子进程编译
         exec('npm run build', { cwd: sourcePath }, (error, stdout, stderr) => {
@@ -128,12 +127,15 @@ ${code.style}
           shell.mkdir(name.enName, `${name.enName}/dist`, `${name.enName}/vue`)
           const distTargetDir = path.join(targetDir, name.enName, 'dist')
           const vueTargetDir = path.join(targetDir, name.enName, 'vue')
-          const jsDir = path.join(sourcePath, 'dist', 'js')
-          const cssDir = path.join(sourcePath, 'dist', 'css')
-          const vueDir = path.join(sourcePath, 'src', 'components')
-          shell.cp('-Rf', `${jsDir}/*.js`, distTargetDir)
-          shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
-          shell.cp('-Rf', `${cssDir}/*.css`, distTargetDir)
+          const distDir = path.join(sourcePath, 'dist')
+          const vueDir = path.join(sourcePath, 'src', 'vue')
+          let jsCode = fs.readFileSync(
+            path.join(distDir, 'index.js')
+          )
+          let matchJsCode = /exportJavascript\s*=\s*({[\s\S]*})\s*}\s*,\s*\/\*/.exec(jsCode)
+          shell.ShellString((matchJsCode && matchJsCode[1]) || '').to(path.join(distTargetDir,'index.js'))
+          // shell.cp('-Rf', `${distDir}/*.js`, distTargetDir)
+          shell.cp('-Rf', `${distDir}/*.css`, distTargetDir)
           shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
 
           // 写入构建完成状态
@@ -164,27 +166,27 @@ router.get('/getcode', async (ctx, next) => {
     const targetDir = path.join(ROOTDIR, 'serve', 'resources', 'page')
     shell.cd(targetDir)
     if (fs.existsSync(`${page.enName}/dist`)) {
-      let matchFileName = null
-      let fileList = fs.readdirSync(`${page.enName}/dist`)
-      for (let i = 0, len = fileList.length; i < len; i++) {
-        if (reg.test(fileList[i])) {
-          matchFileName = fileList[i]
-          break
-        }
-      }
-      if (matchFileName) {
-        let result = fs.readFileSync(
-          path.join(targetDir, page.enName, 'dist', matchFileName)
-        )
-        ctx.response.body = result
-      } else {
-        ctx.response.body = { code: -1, msg: '未找到该文件' }
-      }
+      let jsCode = fs.readFileSync(
+        path.join(targetDir, plugin.enName, 'dist', 'index.js')
+      )
+      let cssCode = fs.readFileSync(
+        path.join(targetDir, plugin.enName, 'dist', 'index.css')
+      )
+      let vueCode = fs.readFileSync(
+        path.join(targetDir, plugin.enName, 'vue', 'index.vue'),
+        'utf8'
+      )
+      let templateCode = /<template>\s*([\s\S]*)\s*<\/template>/.exec(vueCode)
+      ctx.response.body = {code: 0, result: {
+        javascript: jsCode,
+        css: cssCode,
+        tempalte: (templateCode && templateCode[1]) || ''
+      }}
     } else {
-      ctx.response.body = { code: -2, msg: '该组件未构建' }
+      ctx.response.body = { code: -1, msg: '该组件未构建' }
     }
   } else {
-    ctx.response.body = { code: -3, msg: '未找到该组件' }
+    ctx.response.body = { code: -2, msg: '未找到该组件' }
   }
 })
 

@@ -21,6 +21,7 @@
     </div>
   </div>
 </div>
+
 </template>
 <script>
 export default {
@@ -41,6 +42,7 @@ methods: {
     console.log(task)
   }
 }
+
 }
 </script>
 <style lang="scss" scoped>
@@ -54,5 +56,6 @@ methods: {
     }
   }
 }
+
 
 </style>

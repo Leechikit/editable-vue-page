@@ -1,16 +1,16 @@
 <template>
-<div class="test">testb</div>
+<div class="pj-test1">test1</div>
+
 </template>
 <script>
 export default {
-name: 'test',
-created(){
-	console.log(this.$store.state.userInfo)
-}
+name: 'pj-test1'
+
 }
 </script>
 <style lang="scss" scoped>
-.test{
+.pj-test1{
   color: blue;
 }
+
 </style>

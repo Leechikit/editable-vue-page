@@ -31,9 +31,9 @@ router.post('/get', async (ctx, next) => {
   }
   if (plugin) {
     shell.cd(path.join(ROOTDIR, 'serve', 'resources', compType))
-    if (fs.existsSync(`${plugin.enName}/vue/${plugin.enName}.vue`)) {
+    if (fs.existsSync(`${plugin.enName}/vue/index.vue`)) {
       let file = fs.readFileSync(
-        `${plugin.enName}/vue/${plugin.enName}.vue`,
+        `${plugin.enName}/vue/index.vue`,
         'utf8'
       )
       let template = /<template>\s*([\s\S]*)\s*<\/template>/.exec(file)
@@ -116,7 +116,7 @@ ${code.script}
 <style lang="scss" scoped>
 ${code.style}
 </style>`
-        shell.ShellString(vueStr).to(`${name.enName}.vue`)
+        shell.ShellString(vueStr).to('index.vue')
 
         // 写入js文件
         shell.cd(path.join(sourcePath, 'src/javascript'))
@@ -147,11 +147,13 @@ ${code.script}
           const vueTargetDir = path.join(targetDir, name.enName, 'vue')
           const distDir = path.join(sourcePath, 'dist')
           const vueDir = path.join(sourcePath, 'src', 'vue')
-          let jsCode = fs.readFileSync(
-            path.join(distDir, 'index.js')
+          let jsCode = fs.readFileSync(path.join(distDir, 'index.js'))
+          let matchJsCode = /exportJavascript\s*=\s*({[\s\S]*})\s*}\s*,\s*\/\*/.exec(
+            jsCode
           )
-          let matchJsCode = /exportJavascript\s*=\s*({[\s\S]*})\s*}\s*,\s*\/\*/.exec(jsCode)
-          shell.ShellString((matchJsCode && matchJsCode[1]) || '').to(path.join(distTargetDir,'index.js'))
+          shell
+            .ShellString((matchJsCode && matchJsCode[1]) || '')
+            .to(path.join(distTargetDir, 'index.js'))
           // shell.cp('-Rf', `${distDir}/*.js`, distTargetDir)
           shell.cp('-Rf', `${distDir}/*.css`, distTargetDir)
           shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
@@ -164,7 +166,7 @@ ${code.script}
             .to(configPath)
           resolve()
         })
-      }).catch(err=>{
+      }).catch(err => {
         console.log(err)
       })
     })
@@ -193,20 +195,22 @@ router.post('/getcode', async (ctx, next) => {
       let jsCode = fs.readFileSync(
         path.join(targetDir, plugin.enName, 'dist', 'index.js')
       )
-      let matchJsCode = /exportJavascript\s*=\s*({[\s\S]*})\s*}\s*,\s*\/\*/.exec(jsCode)
       let cssCode = fs.readFileSync(
         path.join(targetDir, plugin.enName, 'dist', 'index.css')
       )
       let vueCode = fs.readFileSync(
-        path.join(targetDir, plugin.enName, 'vue', `${plugin.enName}.vue`),
+        path.join(targetDir, plugin.enName, 'vue', 'index.vue'),
         'utf8'
       )
       let templateCode = /<template>\s*([\s\S]*)\s*<\/template>/.exec(vueCode)
-      ctx.response.body = {code: 0, result: {
-        javascript: (matchJsCode && matchJsCode[1]) || '',
-        css: cssCode,
-        tempalte: (templateCode && templateCode[1]) || ''
-      }}
+      ctx.response.body = {
+        code: 0,
+        result: {
+          javascript: jsCode,
+          css: cssCode,
+          tempalte: (templateCode && templateCode[1]) || ''
+        }
+      }
     } else {
       ctx.response.body = { code: -1, msg: '该组件未构建' }
     }

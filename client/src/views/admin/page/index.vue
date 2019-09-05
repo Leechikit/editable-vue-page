@@ -91,7 +91,7 @@ export default {
     save() {
       this.saveLoading = true
       HTTP_PAGE.save({
-        pageId: this.compId === 'create' ? void 0 : this.pageId,
+        pageId: this.pageId === 'create' ? void 0 : this.pageId,
         name: this.name,
         code: this.code
       }).finally(() => {
