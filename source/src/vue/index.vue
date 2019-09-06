@@ -1,16 +1,21 @@
 <template>
-<div class="pg-home">this is page home</div>
+<div class="pj-test1">test1</div>
+
+
 </template>
 <script>
 export default {
-name: 'pg-home',
+name: 'pj-test1',
 created(){
-	console.log('this is page home')
+	console.log('this is project test1')
 }
+
 }
 </script>
 <style lang="scss" scoped>
-.pg-home {
-  color: blue;
+.pj-test1{
+  color: green;
 }
+
+
 </style>

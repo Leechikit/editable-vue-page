@@ -8,9 +8,34 @@ import HTTP_CODE from '@/api/code'
     return new Function(`return ${str}`)()
   }
 
-  evp.registerPlugin = function() {}
+  evp.registerPlugin = function(compName) {
+    return new Promise(async (resolve, reject) => {
+      let result = await HTTP_CODE.getPluginCode({
+        compName
+      })
+      if (+result.code === 0) {
+        if (document.querySelectorAll(`#${compName}`).length === 0) {
+          let styleEl = document.createElement('style')
+          styleEl.innerHTML = result.result.css
+          styleEl.id = compName
+          document.body.appendChild(styleEl)
+        }
+        let options = {
+          name: compName,
+          ...getJavascriptObject(result.result.javascript),
+          template: result.result.template
+        }
+        Vue.component(compName, resolve => {
+          resolve(options)
+        })
+        resolve()
+      } else {
+        reject(result.msg)
+      }
+    })
+  }
 
-  evp.registerPage = async function({ pageName }) {
+  evp.registerPage = async function(pageName) {
     return new Promise(async (resolve, reject) => {
       let result = await HTTP_CODE.getPageCode({
         pageName

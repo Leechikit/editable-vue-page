@@ -1,1 +1,1 @@
-{name:"pj-test1"}
+{name:"pj-test1",created:function(){console.log("this is project test1")}}

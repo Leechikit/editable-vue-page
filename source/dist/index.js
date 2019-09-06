@@ -9,7 +9,7 @@
   !*** ./src/javascript/index.js ***!
   \*********************************/
 /*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */function(e,t){t.exportJavascript={name:"pg-home",created:function(){console.log("this is page home")}}},
+/*! ModuleConcatenation bailout: Module is not an ECMAScript module */function(e,t){t.exportJavascript={name:"pj-test1",created:function(){console.log("this is project test1")}}},
 /*!******************************!*\
   !*** ./src/style/index.scss ***!
   \******************************/

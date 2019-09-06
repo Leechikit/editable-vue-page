@@ -1,1 +1,1 @@
-{name:"pg-home",created:function(){console.log("this is page home")}}
+{name:"pg-home",data:function(){return{type:""}},created:function(){var e=this;console.log("this is page home"),evp.registerPlugin("pj-test1").then(function(){e.type="pj-test1"})}}

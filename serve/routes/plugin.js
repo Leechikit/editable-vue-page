@@ -177,12 +177,15 @@ ${code.script}
 })
 
 router.post('/getcode', async (ctx, next) => {
-  const { compId, compType } = ctx.query
+  const { compName } = ctx.request.body
   let plugin = null
-  if (compType === 'platform' && platformList !== void 0) {
-    plugin = platformList.find(item => item.id === compId)
-  } else if (compType === 'project' && projectList !== void 0) {
-    plugin = projectList.find(item => item.id === compId)
+  let compType = ''
+  if (/^pf-/.test(compName) && platformList !== void 0) {
+    plugin = platformList.find(item => item.enName === compName)
+    compType = 'platform'
+  } else if (/^pj-/.test(compName) && projectList !== void 0) {
+    plugin = projectList.find(item => item.enName === compName)
+    compType = 'project'
   }
   if (plugin) {
     const targetDir = path.join(ROOTDIR, 'serve', 'resources', compType)
@@ -190,10 +193,12 @@ router.post('/getcode', async (ctx, next) => {
     let result = {}
     if (fs.existsSync(`${plugin.enName}/dist`)) {
       let jsCode = fs.readFileSync(
-        path.join(targetDir, plugin.enName, 'dist', 'index.js')
+        path.join(targetDir, plugin.enName, 'dist', 'index.js'),
+        'utf8'
       )
       let cssCode = fs.readFileSync(
-        path.join(targetDir, plugin.enName, 'dist', 'index.css')
+        path.join(targetDir, plugin.enName, 'dist', 'index.css'),
+        'utf8'
       )
       let vueCode = fs.readFileSync(
         path.join(targetDir, plugin.enName, 'vue', 'index.vue'),

@@ -1,8 +1,8 @@
 import { fetch } from './index'
 
 export default {
-  getPluginCode({ compId, compType }) {
-    return fetch('/plugin/getcode', { compId, compType })
+  getPluginCode({ compName }) {
+    return fetch('/plugin/getcode', { compName })
   },
   getPageCode({ pageName }) {
     return fetch('/page/getcode', { pageName })

@@ -12,13 +12,9 @@ export default {
     }
   },
   created() {
-    evp
-      .registerPage({
-        pageName: 'pg-home'
-      })
-      .then(() => {
-        this.type = 'pg-home'
-      })
+    evp.registerPage('pg-home').then(() => {
+      this.type = 'pg-home'
+    })
   }
 }
 </script>
