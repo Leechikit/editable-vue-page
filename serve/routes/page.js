@@ -154,33 +154,32 @@ ${code.script}
   }
 })
 
-router.get('/getcode', async (ctx, next) => {
-  const { pageId, fileName } = ctx.query
-  const reg = new RegExp(
-    `${fileName.split('.')[0]}.\\S+.${fileName.split('.')[1]}`
-  )
+router.post('/getcode', async (ctx, next) => {
+  const { pageName } = ctx.request.body
   let plugin = null
-  let page = pageList.find(item => item.id === pageId)
+  let page = pageList.find(item => item.enName === pageName)
 
   if (page) {
     const targetDir = path.join(ROOTDIR, 'serve', 'resources', 'page')
     shell.cd(targetDir)
     if (fs.existsSync(`${page.enName}/dist`)) {
       let jsCode = fs.readFileSync(
-        path.join(targetDir, plugin.enName, 'dist', 'index.js')
+        path.join(targetDir, page.enName, 'dist', 'index.js'),
+        'utf8'
       )
       let cssCode = fs.readFileSync(
-        path.join(targetDir, plugin.enName, 'dist', 'index.css')
+        path.join(targetDir, page.enName, 'dist', 'index.css'),
+        'utf8'
       )
       let vueCode = fs.readFileSync(
-        path.join(targetDir, plugin.enName, 'vue', 'index.vue'),
+        path.join(targetDir, page.enName, 'vue', 'index.vue'),
         'utf8'
       )
       let templateCode = /<template>\s*([\s\S]*)\s*<\/template>/.exec(vueCode)
       ctx.response.body = {code: 0, result: {
         javascript: jsCode,
         css: cssCode,
-        tempalte: (templateCode && templateCode[1]) || ''
+        template: (templateCode && templateCode[1]) || ''
       }}
     } else {
       ctx.response.body = { code: -1, msg: '该组件未构建' }

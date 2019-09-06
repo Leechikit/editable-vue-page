@@ -177,10 +177,7 @@ ${code.script}
 })
 
 router.post('/getcode', async (ctx, next) => {
-  const { compId, compType, fileName } = ctx.query
-  const reg = new RegExp(
-    `${fileName.split('.')[0]}.\\S+.${fileName.split('.')[1]}`
-  )
+  const { compId, compType } = ctx.query
   let plugin = null
   if (compType === 'platform' && platformList !== void 0) {
     plugin = platformList.find(item => item.id === compId)
@@ -208,7 +205,7 @@ router.post('/getcode', async (ctx, next) => {
         result: {
           javascript: jsCode,
           css: cssCode,
-          tempalte: (templateCode && templateCode[1]) || ''
+          template: (templateCode && templateCode[1]) || ''
         }
       }
     } else {

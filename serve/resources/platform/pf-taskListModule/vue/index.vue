@@ -1,5 +1,5 @@
 <template>
-<div class="taskListModule">
+<div class="pf-taskListModule">
   <div
     v-for="(item, index) in showWorkApp"
     :key="index"
@@ -22,6 +22,7 @@
   </div>
 </div>
 
+
 </template>
 <script>
 export default {
@@ -43,10 +44,11 @@ methods: {
   }
 }
 
+
 }
 </script>
 <style lang="scss" scoped>
-.taskListModule {
+.pf-taskListModule {
   width: 100%;
   .app-list {
     width: 300px;
@@ -56,6 +58,7 @@ methods: {
     }
   }
 }
+
 
 
 </style>

@@ -1,3 +1,6 @@
 exports.exportJavascript = {
-name: 'home'
+name: 'pg-home',
+created(){
+	console.log('this is page home')
+}
 }

@@ -1,0 +1,1 @@
+{name:"pg-home",created:function(){console.log("this is page home")}}

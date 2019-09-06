@@ -1,1 +1,1 @@
-module.exports = [{"id":"1","enName":"home","cnName":"首页","complete":true}]
+module.exports = [{"id":"1","enName":"pg-home","cnName":"首页","complete":true}]
