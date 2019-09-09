@@ -1,1 +1,1 @@
-module.exports = [{"cnName":"任务数量展示模块","enName":"pf-taskListModule","id":"1","complete":true}]
+module.exports = [{"cnName":"任务数量展示模块","enName":"pf-taskListModule","id":"1","complete":true},{"id":"2","enName":"pf-headerNav","cnName":"头部导航条","complete":true}]

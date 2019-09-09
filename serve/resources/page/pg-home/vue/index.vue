@@ -1,7 +1,9 @@
 <template>
 <div class="pg-home">
+  <component :is="pfHeaderNav"></component>
   this is page home
-  <component :is="type"></component>
+  <component :is="pjTest1"></component>
+  <component :is="pfTaskListModule"></component>
 </div>
 </template>
 <script>
@@ -9,14 +11,24 @@ export default {
 name: 'pg-home',
 data() {
 	return {
-    	type: ''
+    	pjTest1: '',
+        pfTaskListModule: '',
+      	pfHeaderNav: ''
     }
 },
 created(){
 	console.log('this is page home')
   	evp
       .registerPlugin('pj-test1').then(() => {
-        this.type = 'pj-test1'
+        this.pjTest1 = 'pj-test1'
+      })
+    evp
+      .registerPlugin('pf-taskListModule').then(() => {
+        this.pfTaskListModule = 'pf-taskListModule'
+      })
+  	evp
+      .registerPlugin('pf-headerNav').then(() => {
+        this.pfHeaderNav = 'pf-headerNav'
       })
 }
 }

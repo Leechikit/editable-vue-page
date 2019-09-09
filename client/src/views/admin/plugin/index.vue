@@ -8,11 +8,7 @@
     >
       {{ item.cnName }}
     </div>
-    <div
-      v-if="compType !== 'platform'"
-      class="plugin-item btn-create"
-      @click="clickHandle('create')"
-    >
+    <div class="plugin-item btn-create" @click="clickHandle('create')">
       <i class="el-icon-plus"></i>
     </div>
   </div>

@@ -1,1 +1,1 @@
-{name:"pg-home",data:function(){return{type:""}},created:function(){var e=this;console.log("this is page home"),evp.registerPlugin("pj-test1").then(function(){e.type="pj-test1"})}}
+{name:"pg-home",data:function(){return{pjTest1:"",pfTaskListModule:"",pfHeaderNav:""}},created:function(){var e=this;console.log("this is page home"),evp.registerPlugin("pj-test1").then(function(){e.pjTest1="pj-test1"}),evp.registerPlugin("pf-taskListModule").then(function(){e.pfTaskListModule="pf-taskListModule"}),evp.registerPlugin("pf-headerNav").then(function(){e.pfHeaderNav="pf-headerNav"})}}
