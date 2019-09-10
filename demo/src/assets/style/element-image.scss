@@ -1,0 +1,20 @@
+// element image组件样式（原有样式被覆盖，于是重写）
+@mixin element-image {
+  .el-image-viewer__close {
+    [class^='el-icon-'] {
+      font-size: 40px;
+      color: #000;
+    }
+  }
+  .el-image-viewer__next,
+  .el-image-viewer__prev {
+    [class^='el-icon-'] {
+      font-size: 24px;
+    }
+  }
+  .el-image-viewer__actions__inner {
+    [class^='el-icon-'] {
+      font-size: 23px;
+    }
+  }
+}

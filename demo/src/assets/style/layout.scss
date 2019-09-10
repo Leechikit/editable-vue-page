@@ -1,0 +1,52 @@
+@import './base.scss';
+
+// 页面布局
+.g-container {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+}
+.g-container-column {
+  @extend .g-container;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+}
+.g-header {
+  display: block;
+  flex-shrink: 0;
+  height: 50px;
+}
+.g-aside {
+  display: block;
+  flex-shrink: 0;
+  width: 300px;
+}
+.g-main {
+  display: block;
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  // flex-basis: 0%;
+  overflow: auto;
+}
+.u-bd-top {
+  border-top: 1px solid $color-layout-border;
+}
+.u-bd-bottom {
+  border-bottom: 1px solid $color-layout-border;
+}
+.u-bd-left {
+  border-left: 1px solid $color-layout-border;
+}
+.u-bd-right {
+  border-right: 1px solid $color-layout-border;
+}
+.u-pd-20-20 {
+  padding: 20px 20px;
+}
+.u-pd-20-30 {
+  padding: 20px 30px;
+}

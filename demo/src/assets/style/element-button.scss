@@ -1,0 +1,33 @@
+// element button组件样式
+@import './base';
+
+@mixin element-button {
+  .el-button {
+    .iconfont {
+      line-height: 12px;
+      vertical-align: bottom;
+    }
+  }
+  .el-button--small {
+    span {
+      line-height: 12px;
+    }
+  }
+  .el-button--primary {
+    background-color: $color-main;
+    border-color: $color-main;
+    &:hover,
+    &:focus {
+      background: rgba($color-main, 0.8);
+      border-color: rgba($color-main, 0.8);
+      color: #fff;
+    }
+  }
+  .el-button--default.is-plain {
+    &:hover,
+    &:focus {
+      border-color: $color-main;
+      color: $color-main;
+    }
+  }
+}

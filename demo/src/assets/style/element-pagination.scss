@@ -1,0 +1,19 @@
+// element pagination组件样式
+@mixin element-pagination {
+  .el-pagination {
+    margin-top: 10px;
+    text-align: right;
+    .el-pagination__jump {
+      margin-left: 0;
+    }
+    .el-input--mini {
+      .el-input__inner {
+        height: 22px;
+        line-height: 22px;
+      }
+      .el-input__icon {
+        line-height: 22px;
+      }
+    }
+  }
+}

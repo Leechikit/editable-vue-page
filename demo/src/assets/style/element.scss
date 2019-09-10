@@ -1,0 +1,20 @@
+@import './element-table.scss';
+@import './element-pagination.scss';
+@import './element-button.scss';
+@import './element-dialog.scss';
+@import './element-image.scss';
+
+@mixin element {
+  // 表格
+  @include element-table;
+  // 分页
+  @include element-pagination;
+  // 按钮
+  @include element-button;
+  // 对话框
+  @include element-dialog;
+  // 图片
+  @include element-image;
+}
+
+@include element()
