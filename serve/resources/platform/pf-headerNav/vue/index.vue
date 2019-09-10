@@ -115,6 +115,7 @@
   </div>
 </div>
 
+
 </template>
 <script>
 export default {
@@ -185,6 +186,7 @@ methods: {
     
   }
 }
+
 
 }
 </script>
@@ -271,5 +273,6 @@ $height: 50px;
   overflow: hidden;
   margin: 0 auto;
 }
+
 
 </style>

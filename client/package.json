@@ -13,6 +13,7 @@
     "element-ui": "^2.11.1",
     "vue": "^2.6.10",
     "vue-codemirror-lite": "^1.0.4",
+    "vue-grid-layout": "^2.3.5",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"
   },
@@ -27,10 +28,10 @@
     "eslint-plugin-vue": "^5.0.0",
     "lint-staged": "^8.1.5",
     "node-sass": "^4.12.0",
+    "portfinder": "^1.0.23",
     "prettier": "^1.18.2",
     "sass-loader": "^7.2.0",
-    "vue-template-compiler": "^2.6.10",
-    "portfinder": "^1.0.23"
+    "vue-template-compiler": "^2.6.10"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"

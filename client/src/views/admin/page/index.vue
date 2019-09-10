@@ -5,7 +5,20 @@
       prefix="页面"
       :disabled="type !== 'create'"
     ></componentDetail>
-    <editorbox v-model="code"></editorbox>
+    <div>
+      <el-switch
+        v-model="editType"
+        active-text="代码编辑"
+        inactive-text="拖拽布局"
+      >
+      </el-switch>
+    </div>
+    <template v-if="editType">
+      <editorBox v-model="code"></editorBox>
+    </template>
+    <template v-else>
+      <layoutBox></layoutBox>
+    </template>
     <div class="button-list">
       <el-button type="primary" :loading="saveLoading" @click="save"
         >保存</el-button
@@ -16,14 +29,16 @@
 </template>
 <script>
 import componentDetail from '@/components/componentDetail'
-import editorbox from '@/components/editorBox'
+import editorBox from '@/components/editorBox'
+import layoutBox from '@/components/layoutBox'
 import HTTP_PAGE from '@/api/page'
 
 export default {
   name: 'editor',
   components: {
     componentDetail,
-    editorbox
+    editorBox,
+    layoutBox
   },
   data() {
     return {
@@ -31,6 +46,7 @@ export default {
       type: 'edit', // 表单类型 edit-编辑 create-创建
       loading: false,
       saveLoading: false,
+      editType: true,
       name: {
         enName: '',
         cnName: ''
