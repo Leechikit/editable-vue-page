@@ -1,19 +1,20 @@
 <template>
   <div class="editor" v-loading="loading">
     <componentDetail
+      v-if="type === 'create'"
       v-model="name"
       prefix="页面"
-      :disabled="type !== 'create'"
     ></componentDetail>
     <div>
       <el-switch
-        v-model="editType"
-        active-text="代码编辑"
-        inactive-text="拖拽布局"
+        v-model="isLayout"
+        inactive-text="代码编辑"
+        active-text="拖拽布局"
+        @change="changeEditType"
       >
       </el-switch>
     </div>
-    <template v-if="editType">
+    <template v-if="!isLayout">
       <editorBox v-model="code"></editorBox>
     </template>
     <template v-else>
@@ -32,6 +33,7 @@ import componentDetail from '@/components/componentDetail'
 import editorBox from '@/components/editorBox'
 import layoutBox from '@/components/layoutBox'
 import HTTP_PAGE from '@/api/page'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'editor',
@@ -46,7 +48,7 @@ export default {
       type: 'edit', // 表单类型 edit-编辑 create-创建
       loading: false,
       saveLoading: false,
-      editType: true,
+      isLayout: false,
       name: {
         enName: '',
         cnName: ''
@@ -77,6 +79,9 @@ export default {
     } else {
       this.getData()
     }
+  },
+  destroyed() {
+    this.setRightAsideVisible(false)
   },
   methods: {
     resetData() {
@@ -116,7 +121,11 @@ export default {
     },
     cancel() {
       this.$router.back()
-    }
+    },
+    changeEditType(val) {
+      this.setRightAsideVisible(val)
+    },
+    ...mapMutations(['setRightAsideVisible'])
   }
 }
 </script>
