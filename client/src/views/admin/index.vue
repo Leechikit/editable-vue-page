@@ -47,7 +47,7 @@
           <!-- </el-card> -->
         </el-main>
         <transition name="slide-in">
-          <el-aside v-show="asideVisible" class="admin-aside" width="200px">
+          <el-aside v-show="asideVisible" class="admin-aside" width="220px">
             <pluginList></pluginList>
           </el-aside>
         </transition>

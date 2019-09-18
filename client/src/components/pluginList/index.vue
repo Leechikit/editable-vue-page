@@ -8,26 +8,34 @@
         <div class="pluginList-buttons">
           <el-button-group>
             <div class="el-button">
-              <el-popover
-                placement="top-start"
-                title="标题"
-                width="200"
-                trigger="hover"
-                content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。"
-              >
+              <el-popover placement="top-start" width="200" trigger="hover">
+                <div class="pluginList-options" v-loading="platformLoading">
+                  <div
+                    class="option"
+                    v-for="(item, $index) in platformPlugins"
+                    :key="$index"
+                    @click="select(item.enName)"
+                  >
+                    {{ item.cnName }}
+                  </div>
+                </div>
                 <el-button slot="reference" size="mini"
                   >平台组件<i class="el-icon-plus el-icon--right"></i
                 ></el-button>
               </el-popover>
             </div>
             <div class="el-button">
-              <el-popover
-                placement="top-start"
-                title="标题"
-                width="200"
-                trigger="hover"
-                content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。"
-              >
+              <el-popover placement="top-start" width="200" trigger="hover">
+                <div class="pluginList-options" v-loading="platformLoading">
+                  <div
+                    class="option"
+                    v-for="(item, $index) in projectPlugins"
+                    :key="$index"
+                    @click="select(item.enName)"
+                  >
+                    {{ item.cnName }}
+                  </div>
+                </div>
                 <el-button slot="reference" size="mini"
                   >项目组件<i class="el-icon-plus el-icon--right"></i
                 ></el-button>
@@ -41,8 +49,44 @@
   </div>
 </template>
 <script>
+import HTTP_PLUGIN from '@/api/plugin'
 export default {
-  name: 'pluginList'
+  name: 'pluginList',
+  data() {
+    return {
+      platformPlugins: [],
+      projectPlugins: [],
+      platformLoading: false,
+      projectLoading: false
+    }
+  },
+  created() {
+    this.getPlatformPlugins()
+    this.getProjectPlugins()
+  },
+  methods: {
+    async getPlatformPlugins() {
+      this.platformLoading = true
+      let result = await HTTP_PLUGIN.getList({
+        compType: 'platform'
+      })
+      this.platformLoading = false
+      if (+result.code === 0) {
+        this.platformPlugins = result.result
+      }
+    },
+    async getProjectPlugins() {
+      this.projectLoading = true
+      let result = await HTTP_PLUGIN.getList({
+        compType: 'project'
+      })
+      this.projectLoading = false
+      if (+result.code === 0) {
+        this.projectPlugins = result.result
+      }
+    },
+    select(name) {}
+  }
 }
 </script>
 <style lang="scss" scoped>
@@ -74,6 +118,9 @@ export default {
         }
       }
     }
+  }
+  &-options {
+    min-height: 50px;
   }
 }
 </style>
