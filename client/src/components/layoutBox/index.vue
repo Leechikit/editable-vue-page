@@ -34,7 +34,7 @@
 </template>
 <script>
 import VueGridLayout from 'vue-grid-layout'
-var testLayout = [{ x: 0, y: 0, w: 1, h: 1, i: '0' }]
+var defaultLayout = []
 export default {
   name: 'layoutBox',
   components: {
@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      layout: testLayout
+      layout: defaultLayout
     }
   },
   methods: {

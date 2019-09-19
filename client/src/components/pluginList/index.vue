@@ -85,7 +85,9 @@ export default {
         this.projectPlugins = result.result
       }
     },
-    select(name) {}
+    select(name) {
+      console.log(name)
+    }
   }
 }
 </script>
@@ -121,6 +123,10 @@ export default {
   }
   &-options {
     min-height: 50px;
+    .option {
+      padding: 5px 0;
+      cursor: pointer;
+    }
   }
 }
 </style>

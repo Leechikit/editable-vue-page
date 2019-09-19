@@ -42,39 +42,20 @@
           </el-menu>
         </el-aside>
         <el-main class="admin-main">
-          <!-- <el-card class="admin-card"> -->
           <router-view />
-          <!-- </el-card> -->
         </el-main>
-        <transition name="slide-in">
-          <el-aside v-show="asideVisible" class="admin-aside" width="220px">
-            <pluginList></pluginList>
-          </el-aside>
-        </transition>
       </el-container>
     </el-container>
   </div>
 </template>
 <script>
 import HTTP_PAGE from '@/api/page'
-import pluginList from '@/components/pluginList'
-import { mapState } from 'vuex'
 
 export default {
   name: 'admin',
-  components: { pluginList },
   data() {
     return {
-      pageList: [],
-      asideVisible: false
-    }
-  },
-  computed: {
-    ...mapState(['rightAsideVisible'])
-  },
-  watch: {
-    rightAsideVisible(val) {
-      this.asideVisible = val
+      pageList: []
     }
   },
   created() {
@@ -104,28 +85,10 @@ export default {
   &-menu {
     height: 100%;
   }
-  &-aside {
-    height: calc(100vh - 50px);
-    background-color: #fff;
-    overflow: auto;
-  }
   &-main {
     height: calc(100vh - 50px);
     background-color: #fff;
     overflow: auto;
   }
-}
-.slide-in-enter-active {
-  display: block;
-  transition: all 0.3s ease;
-}
-.slide-in-leave-active {
-  display: none;
-  // transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.slide-in-enter, .slide-in-leave-to
-/* .slide-fade-leave-active for below version 2.1.8 */ {
-  transform: translateX(200px);
-  opacity: 0;
 }
 </style>

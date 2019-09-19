@@ -1,46 +1,56 @@
 <template>
   <div class="editor" v-loading="loading">
-    <componentDetail
-      v-if="type === 'create'"
-      v-model="name"
-      prefix="页面"
-    ></componentDetail>
-    <div>
-      <el-switch
-        v-model="isLayout"
-        inactive-text="代码编辑"
-        active-text="拖拽布局"
-        @change="changeEditType"
-      >
-      </el-switch>
-    </div>
-    <template v-if="!isLayout">
-      <editorBox v-model="code"></editorBox>
-    </template>
-    <template v-else>
-      <layoutBox></layoutBox>
-    </template>
-    <div class="button-list">
-      <el-button type="primary" :loading="saveLoading" @click="save"
-        >保存</el-button
-      >
-      <el-button @click="cancel">取消</el-button>
-    </div>
+    <el-container>
+      <el-main class="editor-container">
+        <componentDetail
+          v-if="type === 'create'"
+          v-model="name"
+          prefix="页面"
+        ></componentDetail>
+        <div>
+          <el-switch
+            v-model="isLayout"
+            inactive-text="代码编辑"
+            active-text="拖拽布局"
+            @change="changeEditType"
+          >
+          </el-switch>
+        </div>
+        <template v-if="!isLayout">
+          <editorBox v-model="code"></editorBox>
+        </template>
+        <template v-else>
+          <layoutBox></layoutBox>
+        </template>
+        <div class="button-list">
+          <el-button type="primary" :loading="saveLoading" @click="save"
+            >保存</el-button
+          >
+          <el-button @click="cancel">取消</el-button>
+        </div>
+      </el-main>
+      <transition name="slide-in">
+        <el-aside v-show="asideVisible" class="editor-aside" width="220px">
+          <pluginList></pluginList>
+        </el-aside>
+      </transition>
+    </el-container>
   </div>
 </template>
 <script>
 import componentDetail from '@/components/componentDetail'
 import editorBox from '@/components/editorBox'
 import layoutBox from '@/components/layoutBox'
+import pluginList from '@/components/pluginList'
 import HTTP_PAGE from '@/api/page'
-import { mapMutations } from 'vuex'
 
 export default {
   name: 'editor',
   components: {
     componentDetail,
     editorBox,
-    layoutBox
+    layoutBox,
+    pluginList
   },
   data() {
     return {
@@ -49,6 +59,7 @@ export default {
       loading: false,
       saveLoading: false,
       isLayout: false,
+      asideVisible: false,
       name: {
         enName: '',
         cnName: ''
@@ -79,9 +90,6 @@ export default {
     } else {
       this.getData()
     }
-  },
-  destroyed() {
-    this.setRightAsideVisible(false)
   },
   methods: {
     resetData() {
@@ -123,14 +131,34 @@ export default {
       this.$router.back()
     },
     changeEditType(val) {
-      this.setRightAsideVisible(val)
-    },
-    ...mapMutations(['setRightAsideVisible'])
+      this.asideVisible = val
+    }
   }
 }
 </script>
 <style lang="scss" scoped>
+.editor {
+  margin: -20px;
+  overflow: hidden;
+  &-aside {
+    background-color: #fff;
+    overflow: auto;
+  }
+}
 .button-list {
   padding-left: 20px;
+}
+.slide-in-enter-active {
+  display: block;
+  transition: all 0.3s ease;
+}
+.slide-in-leave-active {
+  display: none;
+  // transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-in-enter, .slide-in-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  transform: translateX(200px);
+  opacity: 0;
 }
 </style>
