@@ -1,6 +1,5 @@
 <template>
   <div style="width: 100%; overflow: hidden;">
-    <el-button @click="add">ADD</el-button>
     <div class="layoutBox">
       <div class="layoutBox-edit">
         <grid-layout
@@ -24,7 +23,7 @@
             :i="item.i"
             :key="item.i"
           >
-            {{ item.i }}
+            {{ item.cnName }}
           </grid-item>
         </grid-layout>
       </div>
@@ -34,7 +33,7 @@
 </template>
 <script>
 import VueGridLayout from 'vue-grid-layout'
-var defaultLayout = []
+import { mapState } from 'vuex'
 export default {
   name: 'layoutBox',
   components: {
@@ -43,24 +42,42 @@ export default {
   },
   data() {
     return {
-      layout: defaultLayout
+      layout: [],
+      maxY: 0
     }
   },
+  computed: {
+    ...mapState(['selectedPlugins'])
+  },
+  watch: {
+    selectedPlugins(val) {
+      this.layout = val.map((item, index) => {
+        return this.setLayoutParams({ ...item, i: index })
+      })
+    }
+  },
+  created() {
+    this.layout = this.selectedPlugins.map((item, index) => {
+      return this.setLayoutParams({ ...item, i: index })
+    })
+  },
   methods: {
-    add() {
-      let maxY = 0
+    setLayoutParams({ x = 0, y = this.maxY, w = 4, h = 2, i, enName, cnName }) {
+      let result = {
+        x,
+        y,
+        w,
+        h,
+        i,
+        enName,
+        cnName
+      }
       this.layout.forEach(item => {
-        if (item.y + item.h > maxY) {
-          maxY = item.y + item.h
+        if (item.y + item.h > this.maxY) {
+          this.maxY = item.y + item.h
         }
       })
-      this.layout.push({
-        x: 0,
-        y: maxY,
-        w: 4,
-        h: 2,
-        i: this.layout.length + ''
-      })
+      return result
     }
   }
 }

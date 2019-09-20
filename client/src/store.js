@@ -4,7 +4,16 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {},
-  mutations: {},
+  state: {
+    selectedPlugins: []
+  },
+  mutations: {
+    setSelectedPlugins(state, val) {
+      state.selectedPlugins.push(val)
+    },
+    removeSelectedPlugins(state, index) {
+      state.selectedPlugins.splice(index, 1)
+    }
+  },
   actions: {}
 })

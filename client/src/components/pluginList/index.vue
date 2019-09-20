@@ -3,7 +3,9 @@
     <el-tabs :stretch="true">
       <el-tab-pane label="页面组件">
         <ul class="pluginList-list">
-          <li></li>
+          <li v-for="(item, $index) in selectedPlugins" :key="$index">
+            {{ item.cnName }}
+          </li>
         </ul>
         <div class="pluginList-buttons">
           <el-button-group>
@@ -14,7 +16,7 @@
                     class="option"
                     v-for="(item, $index) in platformPlugins"
                     :key="$index"
-                    @click="select(item.enName)"
+                    @click="select(item)"
                   >
                     {{ item.cnName }}
                   </div>
@@ -31,7 +33,7 @@
                     class="option"
                     v-for="(item, $index) in projectPlugins"
                     :key="$index"
-                    @click="select(item.enName)"
+                    @click="select(item)"
                   >
                     {{ item.cnName }}
                   </div>
@@ -50,6 +52,7 @@
 </template>
 <script>
 import HTTP_PLUGIN from '@/api/plugin'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'pluginList',
   data() {
@@ -59,6 +62,9 @@ export default {
       platformLoading: false,
       projectLoading: false
     }
+  },
+  computed: {
+    ...mapState(['selectedPlugins'])
   },
   created() {
     this.getPlatformPlugins()
@@ -85,9 +91,10 @@ export default {
         this.projectPlugins = result.result
       }
     },
-    select(name) {
-      console.log(name)
-    }
+    select(item) {
+      this.setSelectedPlugins(item)
+    },
+    ...mapMutations(['setSelectedPlugins'])
   }
 }
 </script>
