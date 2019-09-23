@@ -42,9 +42,11 @@ router.post('/get', async (ctx, next) => {
       )
       result.code = 0
       result.result = {
+        id: plugin.id,
         cnName: plugin.cnName,
         enName: plugin.enName,
-        id: plugin.id,
+        width: plugin.width,
+        height: plugin.height,
         template: (template && template[1]) || '',
         script: (script && script[1]) || '',
         style: (style && style[1]) || ''
@@ -59,7 +61,7 @@ router.post('/get', async (ctx, next) => {
 
 router.post('/save', async (ctx, next) => {
   try {
-    const { compId, compType, name, code } = ctx.request.body
+    const { compId, compType, detail, code } = ctx.request.body
     const configPath = path.join(
       ROOTDIR,
       'serve',
@@ -75,20 +77,24 @@ router.post('/save', async (ctx, next) => {
     }
     // 没传compId，为添加
     if (compId === void 0) {
-      if (pluginList.find(item => item.enName === name.enName)) {
+      if (pluginList.find(item => item.enName === detail.enName)) {
         throw new Error('该组件英文名称已存在')
       }
       pluginList.push({
         id: pluginList.length + 1 + '',
-        enName: name.enName,
-        cnName: name.cnName,
+        enName: detail.enName,
+        cnName: detail.cnName,
+        width: detail.width,
+        height: detail.height,
         complete: false
       })
     } else {
-      let curPlugin = pluginList.find(item => item.enName === name.enName)
+      let curPlugin = pluginList.find(item => item.enName === detail.enName)
       if (!curPlugin) {
         throw new Error('该组件不存在')
       }
+      curPlugin.width = detail.width
+      curPlugin.height = detail.height
       curPlugin.complete = false
     }
     shell
@@ -145,16 +151,16 @@ ${code.script}
               )
               shell.cd(targetDir)
               shell.chmod(777, targetDir)
-              if (fs.existsSync(name.enName)) {
-                shell.rm('-rf', name.enName)
+              if (fs.existsSync(detail.enName)) {
+                shell.rm('-rf', detail.enName)
               }
               shell.mkdir(
-                name.enName,
-                `${name.enName}/dist`,
-                `${name.enName}/vue`
+                detail.enName,
+                `${detail.enName}/dist`,
+                `${detail.enName}/vue`
               )
-              const distTargetDir = path.join(targetDir, name.enName, 'dist')
-              const vueTargetDir = path.join(targetDir, name.enName, 'vue')
+              const distTargetDir = path.join(targetDir, detail.enName, 'dist')
+              const vueTargetDir = path.join(targetDir, detail.enName, 'vue')
               const distDir = path.join(sourcePath, 'dist')
               const vueDir = path.join(sourcePath, 'src', 'vue')
               let jsCode = fs.readFileSync(path.join(distDir, 'index.js'))
@@ -170,7 +176,7 @@ ${code.script}
 
               // 写入构建完成状态
               let curPlugin = pluginList.find(
-                item => item.enName === name.enName
+                item => item.enName === detail.enName
               )
               curPlugin.complete = true
               shell

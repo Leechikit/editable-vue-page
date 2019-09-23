@@ -1,7 +1,8 @@
 <template>
   <div class="editor" v-loading="loading">
     <componentDetail
-      v-model="name"
+      v-model="detail"
+      :visible="['name', 'layout']"
       :disabled="type !== 'create'"
     ></componentDetail>
     <editorbox v-model="code"></editorbox>
@@ -31,9 +32,11 @@ export default {
       type: 'edit', // 表单类型 edit-编辑 create-创建
       loading: false,
       saveLoading: false,
-      name: {
+      detail: {
         enName: '',
-        cnName: ''
+        cnName: '',
+        width: 0,
+        height: 0
       },
       code: {
         template: '',
@@ -52,9 +55,11 @@ export default {
   },
   methods: {
     resetData() {
-      this.name = {
+      this.detail = {
         enName: '',
-        cnName: ''
+        cnName: '',
+        width: 0,
+        height: 0
       }
       this.code = {
         template: '',
@@ -70,8 +75,10 @@ export default {
       })
       this.loading = false
       if (+result.code === 0) {
-        this.name.enName = result.result.enName
-        this.name.cnName = result.result.cnName
+        this.detail.enName = result.result.enName
+        this.detail.cnName = result.result.cnName
+        this.detail.width = result.result.width
+        this.detail.height = result.result.height
         this.code.template = result.result.template
         this.code.script = result.result.script
         this.code.style = result.result.style
@@ -82,12 +89,12 @@ export default {
       HTTP_PLUGIN.save({
         compId: this.compId === 'create' ? void 0 : this.compId,
         compType: this.compType,
-        name: this.name,
+        detail: this.detail,
         code: this.code
       }).finally(() => {
         this.saveLoading = false
       })
-      console.log(this.name)
+      console.log(this.detail)
       console.log(this.code)
     },
     cancel() {

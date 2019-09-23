@@ -9,7 +9,7 @@ export default {
   getDetail({ pageId }) {
     return fetch(`${BASEPATH}/get`, { pageId })
   },
-  save({ pageId, name, code }) {
-    return fetch(`${BASEPATH}/save`, { pageId, name, code })
+  save({ pageId, detail, code }) {
+    return fetch(`${BASEPATH}/save`, { pageId, detail, code })
   }
 }

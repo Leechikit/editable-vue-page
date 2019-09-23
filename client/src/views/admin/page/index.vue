@@ -4,7 +4,7 @@
       <el-main class="editor-container">
         <componentDetail
           v-if="type === 'create'"
-          v-model="name"
+          v-model="detail"
           prefix="页面"
         ></componentDetail>
         <div>
@@ -60,7 +60,7 @@ export default {
       saveLoading: false,
       isLayout: false,
       asideVisible: false,
-      name: {
+      detail: {
         enName: '',
         cnName: ''
       },
@@ -93,7 +93,7 @@ export default {
   },
   methods: {
     resetData() {
-      this.name = {
+      this.detail = {
         enName: '',
         cnName: ''
       }
@@ -110,8 +110,8 @@ export default {
       })
       this.loading = false
       if (+result.code === 0) {
-        this.name.enName = result.result.enName
-        this.name.cnName = result.result.cnName
+        this.detail.enName = result.result.enName
+        this.detail.cnName = result.result.cnName
         this.code.template = result.result.template
         this.code.script = result.result.script
         this.code.style = result.result.style
@@ -121,7 +121,7 @@ export default {
       this.saveLoading = true
       HTTP_PAGE.save({
         pageId: this.pageId === 'create' ? void 0 : this.pageId,
-        name: this.name,
+        detail: this.detail,
         code: this.code
       }).finally(() => {
         this.saveLoading = false

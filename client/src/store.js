@@ -9,8 +9,12 @@ export default new Vuex.Store({
   },
   mutations: {
     setSelectedPlugins(state, val) {
+      const { enName, cnName, width, height } = val
       state.selectedPlugins.push({
-        ...val,
+        enName,
+        cnName,
+        w: Math.ceil(width / 125),
+        h: Math.ceil(height / 50),
         id: state.selectedPlugins.length
       })
     },

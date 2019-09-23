@@ -9,7 +9,7 @@ export default {
   getDetail({ compType, compId }) {
     return fetch(`${BASEPATH}/get`, { compType, compId })
   },
-  save({ compId, compType, name, code }) {
-    return fetch(`${BASEPATH}/save`, { compId, compType, name, code })
+  save({ compId, compType, detail, code }) {
+    return fetch(`${BASEPATH}/save`, { compId, compType, detail, code })
   }
 }

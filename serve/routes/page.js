@@ -47,7 +47,7 @@ router.post('/get', async (ctx, next) => {
 
 router.post('/save', async (ctx, next) => {
   try {
-    const { pageId, name, code } = ctx.request.body
+    const { pageId, detail, code } = ctx.request.body
     const configPath = path.join(
       ROOTDIR,
       'serve',
@@ -57,17 +57,17 @@ router.post('/save', async (ctx, next) => {
     )
     // 没传pageId，为添加
     if (pageId === void 0) {
-      if (pageList.find(item => item.enName === name.enName)) {
+      if (pageList.find(item => item.enName === detail.enName)) {
         throw new Error('该组件英文名称已存在')
       }
       pageList.push({
         id: pageList.length + 1 + '',
-        enName: name.enName,
-        cnName: name.cnName,
+        enName: detail.enName,
+        cnName: detail.cnName,
         complete: false
       })
     } else {
-      let curPage = pageList.find(item => item.enName === name.enName)
+      let curPage = pageList.find(item => item.enName === detail.enName)
       if (!curPage) {
         throw new Error('该页面不存在')
       }
@@ -122,16 +122,16 @@ ${code.script}
               const targetDir = path.join(ROOTDIR, 'serve', 'resources', 'page')
               shell.cd(targetDir)
               shell.chmod(777, targetDir)
-              if (fs.existsSync(name.enName)) {
-                shell.rm('-rf', name.enName)
+              if (fs.existsSync(detail.enName)) {
+                shell.rm('-rf', detail.enName)
               }
               shell.mkdir(
-                name.enName,
-                `${name.enName}/dist`,
-                `${name.enName}/vue`
+                detail.enName,
+                `${detail.enName}/dist`,
+                `${detail.enName}/vue`
               )
-              const distTargetDir = path.join(targetDir, name.enName, 'dist')
-              const vueTargetDir = path.join(targetDir, name.enName, 'vue')
+              const distTargetDir = path.join(targetDir, detail.enName, 'dist')
+              const vueTargetDir = path.join(targetDir, detail.enName, 'vue')
               const distDir = path.join(sourcePath, 'dist')
               const vueDir = path.join(sourcePath, 'src', 'vue')
               let jsCode = fs.readFileSync(path.join(distDir, 'index.js'))
@@ -146,7 +146,7 @@ ${code.script}
               shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
 
               // 写入构建完成状态
-              let curPage = pageList.find(item => item.enName === name.enName)
+              let curPage = pageList.find(item => item.enName === detail.enName)
               curPage.complete = true
               shell
                 .ShellString(`module.exports = ${JSON.stringify(pageList)}`)
