@@ -9,7 +9,10 @@ export default new Vuex.Store({
   },
   mutations: {
     setSelectedPlugins(state, val) {
-      state.selectedPlugins.push(val)
+      state.selectedPlugins.push({
+        ...val,
+        id: state.selectedPlugins.length
+      })
     },
     removeSelectedPlugins(state, index) {
       state.selectedPlugins.splice(index, 1)

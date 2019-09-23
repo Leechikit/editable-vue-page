@@ -13,6 +13,7 @@
           :margin="[0, 0]"
           :autoSize="true"
           :use-css-transforms="true"
+          @layout-updated="layoutUpdatedEvent"
         >
           <grid-item
             v-for="item in layout"
@@ -34,6 +35,7 @@
 <script>
 import VueGridLayout from 'vue-grid-layout'
 import { mapState } from 'vuex'
+import { find } from 'lodash'
 export default {
   name: 'layoutBox',
   components: {
@@ -51,8 +53,10 @@ export default {
   },
   watch: {
     selectedPlugins(val) {
-      this.layout = val.map((item, index) => {
-        return this.setLayoutParams({ ...item, i: index })
+      val.forEach(item => {
+        if (!find(this.layout, { i: item.id })) {
+          this.layout.push(this.setLayoutParams({ ...item, i: item.id }))
+        }
       })
     }
   },
@@ -72,12 +76,16 @@ export default {
         enName,
         cnName
       }
-      this.layout.forEach(item => {
+      this.maxY = y + h
+      return result
+    },
+    layoutUpdatedEvent(newLayout) {
+      this.maxY = 0
+      newLayout.forEach(item => {
         if (item.y + item.h > this.maxY) {
           this.maxY = item.y + item.h
         }
       })
-      return result
     }
   }
 }
