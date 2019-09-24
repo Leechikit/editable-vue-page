@@ -24,7 +24,13 @@
             :i="item.i"
             :key="item.i"
           >
-            {{ item.cnName }}
+            <div
+              class="layoutBox-item"
+              :class="{ 's-selected': item.focus }"
+              @click="clickEvent(item)"
+            >
+              {{ item.cnName }}
+            </div>
           </grid-item>
         </grid-layout>
       </div>
@@ -34,7 +40,7 @@
 </template>
 <script>
 import VueGridLayout from 'vue-grid-layout'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { find } from 'lodash'
 export default {
   name: 'layoutBox',
@@ -61,12 +67,21 @@ export default {
     }
   },
   created() {
-    this.layout = this.selectedPlugins.map((item, index) => {
-      return this.setLayoutParams({ ...item, i: index })
+    this.layout = this.selectedPlugins.map(item => {
+      return this.setLayoutParams({ ...item, i: item.id })
     })
   },
   methods: {
-    setLayoutParams({ x = 0, y = this.maxY, w = 4, h = 2, i, enName, cnName }) {
+    setLayoutParams({
+      x = 0,
+      y = this.maxY,
+      w = 4,
+      h = 2,
+      i,
+      enName,
+      cnName,
+      focus
+    }) {
       let result = {
         x,
         y,
@@ -74,7 +89,8 @@ export default {
         h,
         i,
         enName,
-        cnName
+        cnName,
+        focus
       }
       this.maxY = y + h
       return result
@@ -86,7 +102,20 @@ export default {
           this.maxY = item.y + item.h
         }
       })
-    }
+    },
+    clickEvent(item) {
+      const { i: id, w, h, enName, cnName } = item
+      this.modifySelectedPlugins({
+        id,
+        w,
+        h,
+        enName,
+        cnName,
+        focus: true
+      })
+      item.focus = true
+    },
+    ...mapMutations(['modifySelectedPlugins'])
   }
 }
 </script>
@@ -112,6 +141,13 @@ export default {
     background-image: -webkit-linear-gradient(top, transparent 48px, #fff 50px),
       -webkit-linear-gradient(left, transparent 123px, #fff 125px);
     background-size: 125px 50px;
+  }
+  &-item {
+    width: 100%;
+    height: 100%;
+    &.s-selected {
+      border: 1px solid yellow;
+    }
   }
 }
 </style>

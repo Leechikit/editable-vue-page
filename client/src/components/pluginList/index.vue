@@ -3,7 +3,12 @@
     <el-tabs :stretch="true">
       <el-tab-pane label="页面组件">
         <ul class="pluginList-list">
-          <li v-for="(item, $index) in selectedPlugins" :key="$index">
+          <li
+            v-for="(item, $index) in selectedPlugins"
+            :key="$index"
+            class="pluginList-item"
+            :class="{ 's-selected': item.focus }"
+          >
             {{ item.cnName }}
           </li>
         </ul>
@@ -92,9 +97,9 @@ export default {
       }
     },
     select(item) {
-      this.setSelectedPlugins(item)
+      this.addSelectedPlugins(item)
     },
-    ...mapMutations(['setSelectedPlugins'])
+    ...mapMutations(['addSelectedPlugins'])
   }
 }
 </script>
@@ -104,6 +109,11 @@ export default {
   height: 100%;
   border-left: 1px solid $color-layout-border;
   overflow: auto;
+  &-item {
+    &.s-selected {
+      color: $color-main;
+    }
+  }
   &-buttons {
     text-align: center;
     .el-button-group {
