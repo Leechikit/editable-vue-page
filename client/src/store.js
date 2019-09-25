@@ -20,7 +20,7 @@ export default new Vuex.Store({
         focus
       })
     },
-    removeSelectedPlugins(state, id) {
+    removeSelectedPlugin(state, id) {
       const index = findIndex(state.selectedPlugins, { id })
       state.selectedPlugins.splice(index, 1)
     },
@@ -29,6 +29,15 @@ export default new Vuex.Store({
       if (index > -1) {
         state.selectedPlugins.splice(index, 1, val)
       }
+    },
+    focusSelectedPlugin(state, id) {
+      state.selectedPlugins.forEach(item => {
+        if (item.id === id) {
+          item.focus = true
+        } else {
+          item.focus = false
+        }
+      })
     }
   },
   actions: {}

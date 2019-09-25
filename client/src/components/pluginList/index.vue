@@ -2,16 +2,21 @@
   <div class="pluginList">
     <el-tabs :stretch="true">
       <el-tab-pane label="页面组件">
-        <ul class="pluginList-list">
-          <li
-            v-for="(item, $index) in selectedPlugins"
+        <div class="pluginList-list">
+          <div
+            v-for="(item, $index) in layout"
             :key="$index"
             class="pluginList-item"
             :class="{ 's-selected': item.focus }"
+            @click="clickEvent(item)"
           >
-            {{ item.cnName }}
-          </li>
-        </ul>
+            <p>{{ item.cnName }}</p>
+            <p class="button-list">
+              <span class="button">设置</span>
+              <span class="button" @click="deleteEvent(item)">删除</span>
+            </p>
+          </div>
+        </div>
         <div class="pluginList-buttons">
           <el-button-group>
             <div class="el-button">
@@ -65,11 +70,20 @@ export default {
       platformPlugins: [],
       projectPlugins: [],
       platformLoading: false,
-      projectLoading: false
+      projectLoading: false,
+      layout: []
     }
   },
   computed: {
     ...mapState(['selectedPlugins'])
+  },
+  watch: {
+    selectedPlugins: {
+      handler: function(val) {
+        this.layout = val
+      },
+      deep: true
+    }
   },
   created() {
     this.getPlatformPlugins()
@@ -99,7 +113,36 @@ export default {
     select(item) {
       this.addSelectedPlugins(item)
     },
-    ...mapMutations(['addSelectedPlugins'])
+    clickEvent(item) {
+      const { id } = item
+      this.focusSelectedPlugin(id)
+    },
+    deleteEvent(item) {
+      const { id } = item
+      this.$confirm('确定删除该组件?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.removeSelectedPlugin(id)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    ...mapMutations([
+      'addSelectedPlugins',
+      'focusSelectedPlugin',
+      'removeSelectedPlugin'
+    ])
   }
 }
 </script>
@@ -109,9 +152,28 @@ export default {
   height: 100%;
   border-left: 1px solid $color-layout-border;
   overflow: auto;
+  &-list {
+    margin-bottom: 15px;
+  }
   &-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 30px;
+    padding: 0 15px;
+    cursor: pointer;
     &.s-selected {
       color: $color-main;
+    }
+    .button-list {
+      flex-shrink: 0;
+      .button {
+        font-size: 12px;
+        margin-left: 10px;
+        &:hover {
+          color: $color-main;
+        }
+      }
     }
   }
   &-buttons {

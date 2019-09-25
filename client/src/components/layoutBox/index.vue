@@ -58,12 +58,33 @@ export default {
     ...mapState(['selectedPlugins'])
   },
   watch: {
-    selectedPlugins(val) {
-      val.forEach(item => {
-        if (!find(this.layout, { i: item.id })) {
-          this.layout.push(this.setLayoutParams({ ...item, i: item.id }))
+    selectedPlugins: {
+      handler: function(val) {
+        console.log(val)
+        // 添加或修改
+        if (val.length >= this.layout.length) {
+          val.forEach((item, index) => {
+            if (!find(this.layout, { i: item.id })) {
+              this.layout.push(this.setLayoutParams({ ...item, i: item.id }))
+            } else {
+              this.layout[index].focus = item.focus
+            }
+          })
+          // 删除
+        } else {
+          let deleteIndex = null
+          for (let i = 0, len = this.layout.length; i < len; i++) {
+            if (!find(val, { id: this.layout[i].i })) {
+              deleteIndex = i
+              break
+            }
+          }
+          if (deleteIndex !== null) {
+            this.layout.splice(deleteIndex, 1)
+          }
         }
-      })
+      },
+      deep: true
     }
   },
   created() {
@@ -104,18 +125,10 @@ export default {
       })
     },
     clickEvent(item) {
-      const { i: id, w, h, enName, cnName } = item
-      this.modifySelectedPlugins({
-        id,
-        w,
-        h,
-        enName,
-        cnName,
-        focus: true
-      })
-      item.focus = true
+      const { i: id } = item
+      this.focusSelectedPlugin(id)
     },
-    ...mapMutations(['modifySelectedPlugins'])
+    ...mapMutations(['focusSelectedPlugin'])
   }
 }
 </script>
