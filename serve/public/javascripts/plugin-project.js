@@ -1,1 +1,1 @@
-module.exports = [{"id":"1","enName":"pj-test1","cnName":"测试应用一","complete":true},{"id":"2","enName":"pj-test2","cnName":"测试应用二","complete":true}]
+module.exports = [{"id":"1","enName":"pj-test1","cnName":"测试应用一","complete":true,"width":"100","height":"200"},{"id":"2","enName":"pj-test2","cnName":"测试应用二","complete":true,"width":"250","height":"100"}]

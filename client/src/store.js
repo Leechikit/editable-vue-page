@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { findIndex } from 'lodash'
+import randomString from 'random-string'
 
 Vue.use(Vuex)
 
@@ -16,7 +17,7 @@ export default new Vuex.Store({
         cnName,
         w: Math.ceil(width / 125),
         h: Math.ceil(height / 50),
-        id: state.selectedPlugins.length,
+        id: randomString({ length: 10 }),
         focus
       })
     },
