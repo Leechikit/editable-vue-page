@@ -12,7 +12,7 @@
           >
             <p>{{ item.cnName }}</p>
             <p class="button-list">
-              <span class="button">设置</span>
+              <span class="button" @click="modifyEvent(item)">设置</span>
               <span class="button" @click="deleteEvent(item)">删除</span>
             </p>
           </div>
@@ -58,6 +58,25 @@
       </el-tab-pane>
       <el-tab-pane label="页面配置">页面配置</el-tab-pane>
     </el-tabs>
+    <el-dialog
+      title="修改组件"
+      :visible.sync="modifyPluginVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="modifyPluginVisible = false"
+          >取 消</el-button
+        >
+        <el-button
+          size="small"
+          type="primary"
+          @click="modifyPluginVisible = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -71,7 +90,9 @@ export default {
       projectPlugins: [],
       platformLoading: false,
       projectLoading: false,
-      layout: []
+      layout: [],
+      modifyPluginVisible: false,
+      modifyPluginData: {}
     }
   },
   computed: {
@@ -117,26 +138,22 @@ export default {
       const { id } = item
       this.focusSelectedPlugin(id)
     },
+    modifyEvent(item) {
+      this.modifyPluginVisible = true
+    },
     deleteEvent(item) {
       const { id } = item
       this.$confirm('确定删除该组件?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(() => {
+        this.removeSelectedPlugin(id)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
       })
-        .then(() => {
-          this.removeSelectedPlugin(id)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
     },
     ...mapMutations([
       'addSelectedPlugins',
