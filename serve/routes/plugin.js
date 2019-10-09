@@ -7,6 +7,32 @@ const platformList = require('../public/javascripts/plugin-platform')
 const projectList = require('../public/javascripts/plugin-project')
 const ROOTDIR = path.join(process.cwd(), '..')
 let promiseList = Promise.resolve()
+
+function dbPromise(funcName, ...params) {
+  return new Promise((resolve, reject) => {
+    db[funcName](...params, function(err, ret = '') {
+      if (err) {
+        return reject(err)
+      } else {
+        return resolve(ret)
+      }
+    })
+  })
+}
+
+// 加载模块
+const nedb = require('nedb')
+
+// 实例化连接对象（不带参数默认为内存数据库）
+const db = new nedb({
+  filename: './data/plugin.db',
+  autoload: true
+})
+// 对索引设置唯一性约束
+dbPromise('ensureIndex', { fieldName: 'enName', unique: true }).catch(err => {
+  console.error(err)
+})
+
 router.prefix('/serve/plugin')
 
 router.post('/list', async (ctx, next) => {
@@ -88,6 +114,18 @@ router.post('/save', async (ctx, next) => {
         height: detail.height,
         complete: false
       })
+      // 插入单项
+      await dbPromise('insert', {
+        enName: detail.enName,
+        cnName: detail.cnName,
+        width: detail.width,
+        height: detail.height,
+        type: 'porject',
+        complete: false
+      }).catch(err => {
+        console.error(err)
+        ctx.response.body = { code: -1, msg: '保存失败' }
+      })
     } else {
       let curPlugin = pluginList.find(item => item.enName === detail.enName)
       if (!curPlugin) {
@@ -96,6 +134,24 @@ router.post('/save', async (ctx, next) => {
       curPlugin.width = detail.width
       curPlugin.height = detail.height
       curPlugin.complete = false
+      // 更新单项
+      await dbPromise(
+        'update',
+        {
+          enName: detail.enName
+        },
+        {
+          $set: {
+            cnName: detail.cnName,
+            width: detail.width,
+            height: detail.height,
+            complete: false
+          }
+        }
+      ).catch(err => {
+        console.error(err)
+        ctx.response.body = { code: -1, msg: '保存失败' }
+      })
     }
     shell
       .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
@@ -179,6 +235,21 @@ ${code.script}
                 item => item.enName === detail.enName
               )
               curPlugin.complete = true
+              // 更新单项
+              db.update(
+                {
+                  enName: detail.enName
+                },
+                {
+                  $set: {
+                    complete: true
+                  }
+                },
+                (err, ret) => {
+                  console.log(err)
+                  ctx.response.body = { code: 0, msg: '保存成功' }
+                }
+              )
               shell
                 .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
                 .to(configPath)

@@ -1,10 +1,14 @@
 <template>
 <div class="pj-test2"></div>
 
+
+
 </template>
 <script>
 export default {
 name: 'pj-test2'
+
+
 
 }
 </script>
@@ -12,5 +16,7 @@ name: 'pj-test2'
 .pj-test2 {
 	color: yellow;  
 }
+
+
 
 </style>
