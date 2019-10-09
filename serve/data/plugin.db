@@ -1,1 +1,5 @@
+{"enName":"pf-taskListModule","cnName":"任务数量展示模块","width":"400","height":"300","type":"platform","complete":true,"_id":"N0hu5aqlxgQzfuWM"}
+{"enName":"pj-test2","cnName":"测试应用二","width":"250","height":"100","type":"project","complete":false,"_id":"UT4pdoPEEWcRcQWx"}
+{"enName":"pj-test1","cnName":"测试应用一","width":"100","height":"200","type":"project","complete":false,"_id":"jDVOx9E53M04obqV"}
+{"enName":"pf-headerNav","cnName":"头部导航条","width":"1000","height":"50","type":"platform","complete":true,"_id":"tvCdOap8AyELoKmN"}
 {"$$indexCreated":{"fieldName":"enName","unique":true,"sparse":false}}

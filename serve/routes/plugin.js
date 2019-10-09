@@ -3,8 +3,6 @@ const shell = require('shelljs')
 const fs = require('fs')
 const path = require('path')
 const { exec } = require('child_process')
-const platformList = require('../public/javascripts/plugin-platform')
-const projectList = require('../public/javascripts/plugin-project')
 const ROOTDIR = path.join(process.cwd(), '..')
 let promiseList = Promise.resolve()
 
@@ -25,7 +23,7 @@ const nedb = require('nedb')
 
 // 实例化连接对象（不带参数默认为内存数据库）
 const db = new nedb({
-  filename: './data/plugin.db',
+  filename: path.join(ROOTDIR, 'serve', './data/plugin.db'),
   autoload: true
 })
 // 对索引设置唯一性约束
@@ -37,10 +35,12 @@ router.prefix('/serve/plugin')
 
 router.post('/list', async (ctx, next) => {
   const { compType } = ctx.request.body
-  if (compType === 'platform' && platformList !== void 0) {
-    ctx.response.body = { code: 0, result: platformList }
-  } else if (compType === 'project' && projectList !== void 0) {
-    ctx.response.body = { code: 0, result: projectList }
+  let result = await dbPromise('find', { type: compType })
+  if (result) {
+    result.map(item => {
+      item.id = item._id
+    })
+    ctx.response.body = { code: 0, result }
   } else {
     ctx.response.body = { code: -1, msg: '无数据' }
   }
@@ -49,12 +49,7 @@ router.post('/list', async (ctx, next) => {
 router.post('/get', async (ctx, next) => {
   const { compId, compType } = ctx.request.body
   let result = {}
-  let plugin = null
-  if (compType === 'platform' && platformList !== void 0) {
-    plugin = platformList.find(item => item.id === compId)
-  } else if (compType === 'project' && projectList !== void 0) {
-    plugin = projectList.find(item => item.id === compId)
-  }
+  let plugin = await dbPromise('findOne', { _id: compId })
   if (plugin) {
     shell.cd(path.join(ROOTDIR, 'serve', 'resources', compType))
     if (fs.existsSync(`${plugin.enName}/vue/index.vue`)) {
@@ -68,7 +63,7 @@ router.post('/get', async (ctx, next) => {
       )
       result.code = 0
       result.result = {
-        id: plugin.id,
+        id: plugin._id,
         cnName: plugin.cnName,
         enName: plugin.enName,
         width: plugin.width,
@@ -88,74 +83,61 @@ router.post('/get', async (ctx, next) => {
 router.post('/save', async (ctx, next) => {
   try {
     const { compId, compType, detail, code } = ctx.request.body
-    const configPath = path.join(
-      ROOTDIR,
-      'serve',
-      'public',
-      'javascripts',
-      `plugin-${compType}.js`
-    )
-    let pluginList = []
-    if (compType === 'project') {
-      pluginList = projectList
-    } else if (compType === 'platform') {
-      pluginList = platformList
-    }
     // 没传compId，为添加
     if (compId === void 0) {
-      if (pluginList.find(item => item.enName === detail.enName)) {
+      if (
+        (await dbPromise('count', { _id: compId, enName: detail.enName }).catch(
+          err => {}
+        )) > 0
+      ) {
         throw new Error('该组件英文名称已存在')
       }
-      pluginList.push({
-        id: pluginList.length + 1 + '',
-        enName: detail.enName,
-        cnName: detail.cnName,
-        width: detail.width,
-        height: detail.height,
-        complete: false
-      })
       // 插入单项
       await dbPromise('insert', {
         enName: detail.enName,
         cnName: detail.cnName,
         width: detail.width,
         height: detail.height,
-        type: 'porject',
+        type: compType,
         complete: false
       }).catch(err => {
         console.error(err)
         ctx.response.body = { code: -1, msg: '保存失败' }
       })
     } else {
-      let curPlugin = pluginList.find(item => item.enName === detail.enName)
-      if (!curPlugin) {
-        throw new Error('该组件不存在')
-      }
-      curPlugin.width = detail.width
-      curPlugin.height = detail.height
-      curPlugin.complete = false
-      // 更新单项
-      await dbPromise(
-        'update',
-        {
-          enName: detail.enName
-        },
-        {
-          $set: {
-            cnName: detail.cnName,
-            width: detail.width,
-            height: detail.height,
-            complete: false
+      if ((await dbPromise('count', { _id: compId }).catch(err => {})) > 0) {
+        // 更新单项
+        await dbPromise(
+          'update',
+          {
+            _id: compId
+          },
+          {
+            $set: {
+              width: detail.width,
+              height: detail.height,
+              complete: false
+            }
           }
-        }
-      ).catch(err => {
-        console.error(err)
-        ctx.response.body = { code: -1, msg: '保存失败' }
-      })
+        ).catch(err => {
+          console.error(err)
+          ctx.response.body = { code: -1, msg: '保存失败' }
+        })
+      } else {
+        // 插入单项
+        await dbPromise('insert', {
+          enName: detail.enName,
+          cnName: detail.cnName,
+          width: detail.width,
+          height: detail.height,
+          type: compType,
+          complete: false
+        }).catch(err => {
+          console.error(err)
+          ctx.response.body = { code: -1, msg: '保存失败' }
+        })
+      }
     }
-    shell
-      .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
-      .to(configPath)
     ctx.response.body = { code: 0, msg: '保存成功' }
 
     promiseList = promiseList
@@ -231,10 +213,6 @@ ${code.script}
               shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
 
               // 写入构建完成状态
-              let curPlugin = pluginList.find(
-                item => item.enName === detail.enName
-              )
-              curPlugin.complete = true
               // 更新单项
               db.update(
                 {
@@ -250,9 +228,6 @@ ${code.script}
                   ctx.response.body = { code: 0, msg: '保存成功' }
                 }
               )
-              shell
-                .ShellString(`module.exports = ${JSON.stringify(pluginList)}`)
-                .to(configPath)
               resolve()
             }
           )
@@ -271,15 +246,14 @@ ${code.script}
 
 router.post('/getcode', async (ctx, next) => {
   const { compName } = ctx.request.body
-  let plugin = null
+  let plugin = dbPromise('findOne', { enName: compName }).catch(err => {})
   let compType = ''
-  if (/^pf-/.test(compName) && platformList !== void 0) {
-    plugin = platformList.find(item => item.enName === compName)
+  if (/^pf-/.test(compName)) {
     compType = 'platform'
-  } else if (/^pj-/.test(compName) && projectList !== void 0) {
-    plugin = projectList.find(item => item.enName === compName)
+  } else if (/^pj-/.test(compName)) {
     compType = 'project'
   }
+
   if (plugin) {
     const targetDir = path.join(ROOTDIR, 'serve', 'resources', compType)
     shell.cd(targetDir)

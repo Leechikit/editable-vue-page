@@ -1,5 +1,86 @@
-.pj-test2 {
-	color: yellow;  
+$height: 50px;
+
+.iconfont {
+  font-size: 16px;
 }
+.place {
+  height: $height;
+}
+.blue {
+  color: #327dff;
+}
+.custom-main-header {
+  position: fixed;
+  height: $height;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  .custom-main-logo {
+    float: left;
+    img {
+      width: auto;
+      max-width: 350px;
+      padding: 5px;
+    }
+  }
+  .custom-header-breadcrumb {
+    float: left;
+    margin-left: 20px;
+    margin-top: 14px;
+  }
+  .custom-header-menu {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    height: 22px;
+    .custom-header-menu-item {
+      float: left;
+      padding-right: 20px;
+      color: #fff;
+      cursor: pointer;
+      .custom-title,
+      .iconfont {
+        margin-left: 4px;
+        float: left;
+        line-height: 24px;
+      }
+    }
+    .custom-header-menu-item-right {
+      border-right: 1px solid #3c3c46;
+      margin-right: 20px;
+    }
+  }
+}
+.icons-item {
+  margin: 0 0 15px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  color: #5c6b77;
+}
+.icons-item:hover {
+  cursor: pointer;
+  background-color: #f8f8f8;
+}
+.icons-item i {
+  font-size: 30px;
+}
+
+.icons-item span {
+  display: block;
+}
+.icon {
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+
 
 
