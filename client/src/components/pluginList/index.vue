@@ -58,12 +58,7 @@
       </el-tab-pane>
       <el-tab-pane label="页面配置">页面配置</el-tab-pane>
     </el-tabs>
-    <el-dialog
-      title="修改组件"
-      :visible.sync="modifyPluginVisible"
-      width="30%"
-      :before-close="handleClose"
-    >
+    <el-dialog title="修改组件" :visible.sync="modifyPluginVisible" width="30%">
       <span>这是一段信息</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="modifyPluginVisible = false"

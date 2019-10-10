@@ -5,10 +5,18 @@
 
 
 
+
+
+
+
 </template>
 <script>
 export default {
 name: 'pj-test2'
+
+
+
+
 
 
 
@@ -20,6 +28,10 @@ name: 'pj-test2'
 .pj-test2 {
 	color: yellow;  
 }
+
+
+
+
 
 
 

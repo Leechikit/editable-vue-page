@@ -86,9 +86,8 @@ router.post('/save', async (ctx, next) => {
     // 没传compId，为添加
     if (compId === void 0) {
       if (
-        (await dbPromise('count', { _id: compId, enName: detail.enName }).catch(
-          err => {}
-        )) > 0
+        (await dbPromise('count', { enName: detail.enName }).catch(err => {})) >
+        0
       ) {
         throw new Error('该组件英文名称已存在')
       }
@@ -104,40 +103,30 @@ router.post('/save', async (ctx, next) => {
         console.error(err)
         ctx.response.body = { code: -1, msg: '保存失败' }
       })
-    } else {
-      if ((await dbPromise('count', { _id: compId }).catch(err => {})) > 0) {
-        // 更新单项
-        await dbPromise(
-          'update',
-          {
-            _id: compId
-          },
-          {
-            $set: {
-              width: detail.width,
-              height: detail.height,
-              complete: false
-            }
+    } else if (
+      (await dbPromise('count', { _id: compId }).catch(err => {})) > 0
+    ) {
+      // 更新单项
+      await dbPromise(
+        'update',
+        {
+          _id: compId
+        },
+        {
+          $set: {
+            width: detail.width,
+            height: detail.height,
+            complete: false
           }
-        ).catch(err => {
-          console.error(err)
-          ctx.response.body = { code: -1, msg: '保存失败' }
-        })
-      } else {
-        // 插入单项
-        await dbPromise('insert', {
-          enName: detail.enName,
-          cnName: detail.cnName,
-          width: detail.width,
-          height: detail.height,
-          type: compType,
-          complete: false
-        }).catch(err => {
-          console.error(err)
-          ctx.response.body = { code: -1, msg: '保存失败' }
-        })
-      }
+        }
+      ).catch(err => {
+        console.error(err)
+        ctx.response.body = { code: -1, msg: '保存失败' }
+      })
+    } else {
+      ctx.response.body = { code: -2, msg: '保存失败' }
     }
+
     ctx.response.body = { code: 0, msg: '保存成功' }
 
     promiseList = promiseList
@@ -216,7 +205,7 @@ ${code.script}
               // 更新单项
               db.update(
                 {
-                  enName: detail.enName
+                  _id: compId
                 },
                 {
                   $set: {
@@ -244,9 +233,21 @@ ${code.script}
   }
 })
 
+router.post('/remove', async (ctx, next) => {
+  const { compId } = ctx.request.body
+  if (compId === void 0) {
+    ctx.response.body = { code: -2, msg: '缺少参数' }
+  } else {
+    await dbPromise('remove', { _id: compId }).catch(err => {
+      ctx.response.body = { code: -1, msg: '删除失败' }
+    })
+    ctx.response.body = { code: 0, msg: '删除成功' }
+  }
+})
+
 router.post('/getcode', async (ctx, next) => {
   const { compName } = ctx.request.body
-  let plugin = dbPromise('findOne', { enName: compName }).catch(err => {})
+  let plugin = await dbPromise('findOne', { enName: compName }).catch(err => {})
   let compType = ''
   if (/^pf-/.test(compName)) {
     compType = 'platform'

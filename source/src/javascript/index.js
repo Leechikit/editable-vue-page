@@ -1,74 +1,25 @@
 exports.exportJavascript = {
-props: {
-  opacity: {
-    type: String,
-    default: '1'
-  },
-  display: {
-    type: String,
-    default: 'block'
-  }
-},
+name: 'pg-home',
 data() {
-  return {
-    appListShow: false,
-    popoverShow: false,
-    logoImg: '',
-    userName: '用户',
-    currentPath: [
-        {
-          title: '首页',
-          path: 'home',
-          name: 'home_index'
-        }
-     ]
-  }
+	return {
+    	pjTest1: '',
+        pfTaskListModule: '',
+      	pfHeaderNav: ''
+    }
 },
-methods: {
-  toName(name) {
-    return name ? { name } : ''
-  },
-  itemTitle(item) {
-    return item.title
-  },
-  gotoMyWork() {
-    this.$router.push({
-      name: 'my-work'
-    })
-  },
-  gotoDocumentLib() {
-    this.$router.push({
-      name: 'document-lib'
-    })
-  },
-  gotoPersonalInformation() {
-    this.$router.push({
-      name: 'personal_information'
-    })
-  },
-  goAppManager() {
-    this.$router.push({
-      name: 'workflow-design'
-    })
-  },
-  gotoPage() {
-    this.$router.push({
-      name: 'people-manage'
-    })
-  },
-  toApp(itemId, itemName) {
-    
-  },
-  getModuleList(showAppList = true) {
-    
-  },
-  goSystem(name) {
-    
-  }
+created(){
+	console.log('this is page home')
+  	evp
+      .registerPlugin('pj-test1').then(() => {
+        this.pjTest1 = 'pj-test1'
+      })
+    evp
+      .registerPlugin('pf-taskListModule').then(() => {
+        this.pfTaskListModule = 'pf-taskListModule'
+      })
+  	evp
+      .registerPlugin('pf-headerNav').then(() => {
+        this.pfHeaderNav = 'pf-headerNav'
+      })
 }
-
-
-
-
-
 }

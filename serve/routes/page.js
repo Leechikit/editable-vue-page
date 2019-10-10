@@ -7,16 +7,50 @@ const pageList = require('../public/javascripts/page')
 const ROOTDIR = path.join(process.cwd(), '..')
 let promiseList = Promise.resolve()
 
+function dbPromise(funcName, ...params) {
+  return new Promise((resolve, reject) => {
+    db[funcName](...params, function(err, ret = '') {
+      if (err) {
+        return reject(err)
+      } else {
+        return resolve(ret)
+      }
+    })
+  })
+}
+
+// 加载模块
+const nedb = require('nedb')
+
+// 实例化连接对象（不带参数默认为内存数据库）
+const db = new nedb({
+  filename: path.join(ROOTDIR, 'serve', './data/page.db'),
+  autoload: true
+})
+
+// 对索引设置唯一性约束
+dbPromise('ensureIndex', { fieldName: 'enName', unique: true }).catch(err => {
+  console.error(err)
+})
+
 router.prefix('/serve/page')
 
 router.post('/list', async (ctx, next) => {
-  ctx.response.body = { code: 0, result: pageList }
+  let result = await dbPromise('find', {})
+  if (result) {
+    result.map(item => {
+      item.id = item._id
+    })
+    ctx.response.body = { code: 0, result }
+  } else {
+    ctx.response.body = { code: -1, msg: '无数据' }
+  }
 })
 
 router.post('/get', async (ctx, next) => {
   const { pageId } = ctx.request.body
   let result = {}
-  let page = pageList.find(item => item.id === pageId)
+  let page = await dbPromise('findOne', {})
   if (page) {
     shell.cd(path.join(ROOTDIR, 'serve', 'resources', 'page'))
     if (fs.existsSync(`${page.enName}/vue/index.vue`)) {
@@ -48,34 +82,45 @@ router.post('/get', async (ctx, next) => {
 router.post('/save', async (ctx, next) => {
   try {
     const { pageId, detail, code } = ctx.request.body
-    const configPath = path.join(
-      ROOTDIR,
-      'serve',
-      'public',
-      'javascripts',
-      'page.js'
-    )
     // 没传pageId，为添加
     if (pageId === void 0) {
-      if (pageList.find(item => item.enName === detail.enName)) {
+      if (
+        (await dbPromise('count', { enName: detail.enName }).catch(err => {})) >
+        0
+      ) {
         throw new Error('该组件英文名称已存在')
       }
-      pageList.push({
-        id: pageList.length + 1 + '',
+      // 插入单项
+      await dbPromise('insert', {
         enName: detail.enName,
         cnName: detail.cnName,
         complete: false
+      }).catch(err => {
+        console.error(err)
+        ctx.response.body = { code: -1, msg: '保存失败' }
+      })
+    } else if (
+      (await dbPromise('count', { _id: pageId }).catch(err => {})) > 0
+    ) {
+      // 更新单项
+      await dbPromise(
+        'update',
+        {
+          _id: pageId
+        },
+        {
+          $set: {
+            complete: false
+          }
+        }
+      ).catch(err => {
+        console.error(err)
+        ctx.response.body = { code: -1, msg: '保存失败' }
       })
     } else {
-      let curPage = pageList.find(item => item.enName === detail.enName)
-      if (!curPage) {
-        throw new Error('该页面不存在')
-      }
-      curPage.complete = false
+      ctx.response.body = { code: -2, msg: '保存失败' }
     }
-    shell
-      .ShellString(`module.exports = ${JSON.stringify(pageList)}`)
-      .to(configPath)
+
     ctx.response.body = { code: 0, msg: '保存成功' }
 
     promiseList = promiseList
@@ -146,11 +191,21 @@ ${code.script}
               shell.cp('-Rf', `${vueDir}/*.vue`, vueTargetDir)
 
               // 写入构建完成状态
-              let curPage = pageList.find(item => item.enName === detail.enName)
-              curPage.complete = true
-              shell
-                .ShellString(`module.exports = ${JSON.stringify(pageList)}`)
-                .to(configPath)
+              // 更新单项
+              db.update(
+                {
+                  _id: pageId
+                },
+                {
+                  $set: {
+                    complete: true
+                  }
+                },
+                (err, ret) => {
+                  console.log(err)
+                  ctx.response.body = { code: 0, msg: '保存成功' }
+                }
+              )
               resolve()
             }
           )
@@ -165,10 +220,21 @@ ${code.script}
   }
 })
 
+router.post('/remove', async (ctx, next) => {
+  const { pageId } = ctx.request.body
+  if (pageId === void 0) {
+    ctx.response.body = { code: -2, msg: '缺少参数' }
+  } else {
+    await dbPromise('remove', { _id: pageId }).catch(err => {
+      ctx.response.body = { code: -1, msg: '删除失败' }
+    })
+    ctx.response.body = { code: 0, msg: '删除成功' }
+  }
+})
+
 router.post('/getcode', async (ctx, next) => {
   const { pageName } = ctx.request.body
-  let plugin = null
-  let page = pageList.find(item => item.enName === pageName)
+  let page = await dbPromise('findOne', { enName: pageName }).catch(err => {})
 
   if (page) {
     const targetDir = path.join(ROOTDIR, 'serve', 'resources', 'page')
