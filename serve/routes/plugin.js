@@ -24,7 +24,8 @@ const nedb = require('nedb')
 // 实例化连接对象（不带参数默认为内存数据库）
 const db = new nedb({
   filename: path.join(ROOTDIR, 'serve', './data/plugin.db'),
-  autoload: true
+  autoload: true,
+  timestampData: true
 })
 // 对索引设置唯一性约束
 dbPromise('ensureIndex', { fieldName: 'enName', unique: true }).catch(err => {
@@ -39,6 +40,9 @@ router.post('/list', async (ctx, next) => {
   if (result) {
     result.map(item => {
       item.id = item._id
+    })
+    result.sort((a, b)=>{
+      return a.createdAt - b.createdAt
     })
     ctx.response.body = { code: 0, result }
   } else {
@@ -91,6 +95,8 @@ router.post('/save', async (ctx, next) => {
       ) {
         throw new Error('该组件英文名称已存在')
       }
+      detail.enName =
+        { platform: 'pf-', project: 'pj-' }[compType] + detail.enName
       // 插入单项
       await dbPromise('insert', {
         enName: detail.enName,
@@ -229,7 +235,7 @@ ${code.script}
       })
   } catch (error) {
     console.log(error)
-    ctx.response.body = { code: -1, msg: '保存失败' }
+    ctx.response.body = { code: -1, msg: error.message || '保存失败' }
   }
 })
 

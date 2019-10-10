@@ -1,22 +1,26 @@
 <template>
   <div class="componentDetail">
-    <el-form :model="value" label-width="100px">
+    <el-form ref="form" :model="value" :rules="rules" label-width="110px">
       <moduleBox :title="`${prefix}名称`" v-if="visible.includes('name')">
-        <el-form-item :label="`${prefix}中文名称`">
+        <el-form-item :label="`${prefix}中文名称`" prop="cnName">
           <el-input v-model="value.cnName" :disabled="disabled"></el-input>
         </el-form-item>
-        <el-form-item :label="`${prefix}英文名称`">
-          <el-input v-model="value.enName" :disabled="disabled"></el-input>
+        <el-form-item :label="`${prefix}英文名称`" prop="enName">
+          <el-input v-model="value.enName" :disabled="disabled">
+            <span v-if="!disabled && prepend" slot="prepend">{{
+              prepend
+            }}</span>
+          </el-input>
         </el-form-item>
       </moduleBox>
       <moduleBox title="默认宽高" v-if="visible.includes('layout')">
-        <el-form-item :label="`${prefix}宽度`">
-          <el-input v-model="value.width">
+        <el-form-item :label="`${prefix}宽度`" prop="compWidth">
+          <el-input v-model="value.compWidth">
             <span slot="append">px</span>
           </el-input>
         </el-form-item>
-        <el-form-item :label="`${prefix}高度`">
-          <el-input v-model="value.height">
+        <el-form-item :label="`${prefix}高度`" prop="compHeight">
+          <el-input v-model="value.compHeight">
             <span slot="append">px</span>
           </el-input>
         </el-form-item>
@@ -39,8 +43,8 @@ export default {
         return {
           enName: '',
           cnName: '',
-          width: 0,
-          height: 0
+          compWidth: 0,
+          compHeight: 0
         }
       }
     },
@@ -55,6 +59,44 @@ export default {
     visible: {
       type: Array,
       default: () => ['name']
+    },
+    prepend: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      rules: {
+        cnName: [
+          {
+            required: true,
+            message: `请输入${this.prefix}中文名称`,
+            trigger: 'blur'
+          }
+        ],
+        enName: [
+          {
+            required: true,
+            message: `请输入${this.prefix}英文名称`,
+            trigger: 'blur'
+          }
+        ],
+        compWidth: [
+          {
+            required: true,
+            message: `请输入${this.prefix}宽度`,
+            trigger: 'blur'
+          }
+        ],
+        compHeight: [
+          {
+            required: true,
+            message: `请输入${this.prefix}高度`,
+            trigger: 'blur'
+          }
+        ]
+      }
     }
   },
   watch: {
@@ -63,6 +105,23 @@ export default {
         this.$emit('input', value)
       },
       deep: true
+    }
+  },
+  methods: {
+    validate() {
+      return new Promise(resolve => {
+        this.$refs.form.validate(valid => {
+          if (valid) {
+            return resolve(true)
+          } else {
+            this.$message({
+              type: 'warning',
+              message: '请填写必填数据'
+            })
+            return resolve(false)
+          }
+        })
+      })
     }
   }
 }

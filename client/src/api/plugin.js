@@ -11,5 +11,8 @@ export default {
   },
   save({ compId, compType, detail, code }) {
     return fetch(`${BASEPATH}/save`, { compId, compType, detail, code })
+  },
+  remove({ compId }) {
+    return fetch(`${BASEPATH}/remove`, { compId })
   }
 }

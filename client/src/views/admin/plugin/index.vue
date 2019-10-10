@@ -69,6 +69,7 @@ export default {
   margin-bottom: -20px;
   overflow: hidden;
   &-item {
+    position: relative;
     float: left;
     display: flex;
     justify-content: center;
@@ -77,9 +78,15 @@ export default {
     height: 80px;
     margin-right: 20px;
     margin-bottom: 20px;
-    border: 1px solid $color-layout-border;
+    border: 1px solid $color-main;
+    border-radius: 5px;
+    color: $color-main;
     cursor: pointer;
-    background-color: #f1f1f1;
+    &:hover {
+      background-color: rgba($color-main, 0.8);
+      border-color: rgba($color-main, 0.8);
+      color: #fff;
+    }
   }
   .btn-create {
     font-size: 20px;

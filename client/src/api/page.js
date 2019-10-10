@@ -11,5 +11,8 @@ export default {
   },
   save({ pageId, detail, code }) {
     return fetch(`${BASEPATH}/save`, { pageId, detail, code })
+  },
+  remove({ pageId }) {
+    return fetch(`${BASEPATH}/remove`, { pageId })
   }
 }
