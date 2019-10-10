@@ -4,8 +4,10 @@
       <el-main class="editor-container">
         <componentDetail
           v-if="type === 'create'"
+          ref="componentDetail"
           v-model="detail"
           prefix="页面"
+          prepend="pg-"
         ></componentDetail>
         <div>
           <el-switch
@@ -117,15 +119,37 @@ export default {
         this.code.style = result.result.style
       }
     },
-    save() {
+    async save() {
+      const valid = await this.$refs.componentDetail.validate()
+      if (valid === false) return
       this.saveLoading = true
       HTTP_PAGE.save({
         pageId: this.pageId === 'create' ? void 0 : this.pageId,
         detail: this.detail,
         code: this.code
-      }).finally(() => {
-        this.saveLoading = false
       })
+        .then(res => {
+          if (+res.code === 0) {
+            this.$message({
+              type: 'success',
+              message: '保存成功!'
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: '保存失败!\n' + res.msg
+            })
+          }
+        })
+        .catch(err => {
+          this.$message({
+            type: 'error',
+            message: '保存失败!\n' + err
+          })
+        })
+        .finally(() => {
+          this.saveLoading = false
+        })
     },
     cancel() {
       this.$router.back()

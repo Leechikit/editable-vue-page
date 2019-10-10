@@ -42,6 +42,9 @@ router.post('/list', async (ctx, next) => {
     result.map(item => {
       item.id = item._id
     })
+    result.sort((a, b)=>{
+      return a.createdAt - b.createdAt
+    })
     ctx.response.body = { code: 0, result }
   } else {
     ctx.response.body = { code: -1, msg: '无数据' }
@@ -91,6 +94,7 @@ router.post('/save', async (ctx, next) => {
       ) {
         throw new Error('该组件英文名称已存在')
       }
+      detail.enName = 'pg' + detail.enName
       // 插入单项
       await dbPromise('insert', {
         enName: detail.enName,
