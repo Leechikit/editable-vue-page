@@ -1,3 +1,3 @@
 {"enName":"pg-home","cnName":"首页","complete":true,"_id":"PxiXRtMMzG6qXMLb","createdAt":{"$$date":1570710587100},"updatedAt":{"$$date":1570710587126}}
-{"$$indexCreated":{"fieldName":"enName","unique":true,"sparse":false}}
 {"enName":"pg-applist","cnName":"应用列表","complete":false,"_id":"cQALkqYYr5dcohCl","createdAt":{"$$date":1570710859898},"updatedAt":{"$$date":1570710859898}}
+{"$$indexCreated":{"fieldName":"enName","unique":true,"sparse":false}}

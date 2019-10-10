@@ -42,7 +42,7 @@ router.post('/list', async (ctx, next) => {
     result.map(item => {
       item.id = item._id
     })
-    result.sort((a, b)=>{
+    result.sort((a, b) => {
       return a.createdAt - b.createdAt
     })
     ctx.response.body = { code: 0, result }
@@ -54,7 +54,7 @@ router.post('/list', async (ctx, next) => {
 router.post('/get', async (ctx, next) => {
   const { pageId } = ctx.request.body
   let result = {}
-  let page = await dbPromise('findOne', {})
+  let page = await dbPromise('findOne', { _id: pageId })
   if (page) {
     shell.cd(path.join(ROOTDIR, 'serve', 'resources', 'page'))
     if (fs.existsSync(`${page.enName}/vue/index.vue`)) {
