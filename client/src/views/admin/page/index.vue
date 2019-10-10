@@ -3,9 +3,10 @@
     <el-container>
       <el-main class="editor-container">
         <componentDetail
-          v-if="type === 'create'"
           ref="componentDetail"
           v-model="detail"
+          :visible="['name']"
+          :mode="mode"
           prefix="页面"
           prepend="pg-"
         ></componentDetail>
@@ -57,7 +58,7 @@ export default {
   data() {
     return {
       pageId: this.$route.params.pageId,
-      type: 'edit', // 表单类型 edit-编辑 create-创建
+      mode: 'edit', // 表单类型 edit-编辑 create-创建
       loading: false,
       saveLoading: false,
       isLayout: false,
@@ -78,9 +79,9 @@ export default {
       this.pageId = this.$route.params.pageId
       this.resetData()
       if (this.pageId === 'create') {
-        this.type = 'create'
+        this.mode = 'create'
       } else {
-        this.type = 'edit'
+        this.mode = 'edit'
         this.getData()
       }
     }
@@ -88,7 +89,7 @@ export default {
   created() {
     this.resetData()
     if (this.pageId === 'create') {
-      this.type = 'create'
+      this.mode = 'create'
     } else {
       this.getData()
     }

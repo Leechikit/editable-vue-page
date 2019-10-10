@@ -4,7 +4,7 @@
       ref="componentDetail"
       v-model="detail"
       :visible="['name', 'layout']"
-      :disabled="type !== 'create'"
+      :mode="mode"
       :prepend="compType ? { platform: 'pf-', project: 'pj-' }[compType] : ''"
     ></componentDetail>
     <editorbox v-model="code"></editorbox>
@@ -31,7 +31,7 @@ export default {
     return {
       compId: this.$route.params.compId,
       compType: this.$route.params.compType,
-      type: 'edit', // 表单类型 edit-编辑 create-创建
+      mode: 'edit', // 表单类型 edit-编辑 create-创建
       loading: false,
       saveLoading: false,
       detail: {
@@ -50,7 +50,7 @@ export default {
   created() {
     this.resetData()
     if (this.compId === 'create') {
-      this.type = 'create'
+      this.mode = 'create'
     } else {
       this.getData()
     }

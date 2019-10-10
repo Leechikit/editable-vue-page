@@ -94,7 +94,7 @@ router.post('/save', async (ctx, next) => {
       ) {
         throw new Error('该组件英文名称已存在')
       }
-      detail.enName = 'pg' + detail.enName
+      detail.enName = 'pg-' + detail.enName
       // 插入单项
       await dbPromise('insert', {
         enName: detail.enName,

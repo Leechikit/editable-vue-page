@@ -3,11 +3,14 @@
     <el-form ref="form" :model="value" :rules="rules" label-width="110px">
       <moduleBox :title="`${prefix}名称`" v-if="visible.includes('name')">
         <el-form-item :label="`${prefix}中文名称`" prop="cnName">
-          <el-input v-model="value.cnName" :disabled="disabled"></el-input>
+          <el-input
+            v-model="value.cnName"
+            :disabled="mode !== 'create'"
+          ></el-input>
         </el-form-item>
         <el-form-item :label="`${prefix}英文名称`" prop="enName">
-          <el-input v-model="value.enName" :disabled="disabled">
-            <span v-if="!disabled && prepend" slot="prepend">{{
+          <el-input v-model="value.enName" :disabled="mode !== 'create'">
+            <span v-if="mode === 'create' && prepend" slot="prepend">{{
               prepend
             }}</span>
           </el-input>
@@ -52,9 +55,9 @@ export default {
       type: String,
       default: '组件'
     },
-    disabled: {
-      type: Boolean,
-      default: () => false
+    mode: {
+      type: String,
+      default: 'create'
     },
     visible: {
       type: Array,
@@ -70,14 +73,14 @@ export default {
       rules: {
         cnName: [
           {
-            required: true,
+            required: !this.disabled,
             message: `请输入${this.prefix}中文名称`,
             trigger: 'blur'
           }
         ],
         enName: [
           {
-            required: true,
+            required: !this.disabled,
             message: `请输入${this.prefix}英文名称`,
             trigger: 'blur'
           }
@@ -105,9 +108,47 @@ export default {
         this.$emit('input', value)
       },
       deep: true
+    },
+    mode() {
+      this.setRules()
     }
   },
+  created() {
+    this.setRules()
+  },
   methods: {
+    setRules() {
+      this.rules = {
+        cnName: [
+          {
+            required: this.mode === 'create',
+            message: `请输入${this.prefix}中文名称`,
+            trigger: 'blur'
+          }
+        ],
+        enName: [
+          {
+            required: this.mode === 'create',
+            message: `请输入${this.prefix}英文名称`,
+            trigger: 'blur'
+          }
+        ],
+        compWidth: [
+          {
+            required: true,
+            message: `请输入${this.prefix}宽度`,
+            trigger: 'blur'
+          }
+        ],
+        compHeight: [
+          {
+            required: true,
+            message: `请输入${this.prefix}高度`,
+            trigger: 'blur'
+          }
+        ]
+      }
+    },
     validate() {
       return new Promise(resolve => {
         this.$refs.form.validate(valid => {
