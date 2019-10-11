@@ -24,7 +24,7 @@
                 v-for="item in pageList"
                 :key="item.id"
                 :index="`/admin/page/${item.id}`"
-                >{{ item.cnName }}</el-menu-item
+                >{{ item.cnName }}管理</el-menu-item
               >
             </el-submenu>
             <el-submenu index="admin/plugin">

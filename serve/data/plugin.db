@@ -6,3 +6,7 @@
 {"enName":"pj-test4","cnName":"测试应用四","width":"500","height":"50","type":"project","complete":false,"_id":"mbLFJXeNch3R68y9","createdAt":{"$$date":1570708139810},"updatedAt":{"$$date":1570708139810}}
 {"enName":"pf-headerNav","cnName":"头部导航条","width":"1000","height":"50","type":"platform","complete":true,"_id":"tvCdOap8AyELoKmN","createdAt":{"$$date":1570708139810},"updatedAt":{"$$date":1570708139810}}
 {"$$indexCreated":{"fieldName":"enName","unique":true,"sparse":false}}
+{"$$deleted":true,"_id":"giETnFLnF8cj4Wcn"}
+{"$$deleted":true,"_id":"mbLFJXeNch3R68y9"}
+{"$$deleted":true,"_id":"dZezKuemucgdy2BD"}
+{"enName":"pj-test3","cnName":"测试应用三","width":"250","height":"50","type":"project","complete":false,"_id":"zo1sSpOXRuOdHQLT","createdAt":{"$$date":1570762848121},"updatedAt":{"$$date":1570762848121}}

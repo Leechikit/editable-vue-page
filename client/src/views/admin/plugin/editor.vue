@@ -12,6 +12,12 @@
       <el-button type="primary" :loading="saveLoading" @click="save"
         >保存</el-button
       >
+      <el-button
+        v-if="this.compId !== 'create'"
+        :loading="removeLoading"
+        @click="removeConfirm"
+        >删除</el-button
+      >
       <el-button @click="cancel">取消</el-button>
     </div>
   </div>
@@ -34,6 +40,7 @@ export default {
       mode: 'edit', // 表单类型 edit-编辑 create-创建
       loading: false,
       saveLoading: false,
+      removeLoading: false,
       detail: {
         enName: '',
         cnName: '',
@@ -74,6 +81,11 @@ export default {
       let result = await HTTP_PLUGIN.getDetail({
         compId: this.compId,
         compType: this.compType
+      }).catch(err => {
+        this.$message({
+          type: 'error',
+          message: '暂无数据\n' + err
+        })
       })
       this.loading = false
       if (+result.code === 0) {
@@ -84,6 +96,11 @@ export default {
         this.code.template = result.result.template
         this.code.script = result.result.script
         this.code.style = result.result.style
+      } else {
+        this.$message({
+          type: 'error',
+          message: result.msg
+        })
       }
     },
     async save() {
@@ -128,6 +145,42 @@ export default {
         })
         .finally(() => {
           this.saveLoading = false
+        })
+    },
+    removeConfirm() {
+      this.$confirm('确定删除该组件?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.remove()
+      })
+    },
+    remove() {
+      this.removeLoading = true
+      HTTP_PLUGIN.remove({ compId: this.compId })
+        .then(res => {
+          if (+res.code === 0) {
+            this.$router.back()
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          } else {
+            this.$message({
+              type: 'error',
+              message: '删除失败!\n' + res.msg
+            })
+          }
+        })
+        .catch(err => {
+          this.$message({
+            type: 'error',
+            message: '删除失败!\n' + err
+          })
+        })
+        .finally(() => {
+          this.removeLoading = false
         })
     },
     cancel() {
