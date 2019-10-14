@@ -3,7 +3,6 @@ const shell = require('shelljs')
 const fs = require('fs')
 const path = require('path')
 const { exec } = require('child_process')
-const pageList = require('../public/javascripts/page')
 const ROOTDIR = path.join(process.cwd(), '..')
 let promiseList = Promise.resolve()
 
