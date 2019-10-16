@@ -184,12 +184,22 @@ export default {
     },
     dragleave() {
       console.log('dragleave')
-      this.layout.pop
+      this.layout.pop()
       this.draging = false
     },
     drop() {
       console.log('drop')
       this.draging = false
+      this.addSelectedPlugins2({
+        x: Math.floor(event.offsetX / 125),
+        y: Math.floor(event.offsetY / 50),
+        w: 4,
+        h: 2,
+        i: this.currentId,
+        enName: 'test',
+        cnName: '测试',
+        focus: false
+      })
     },
     setLayoutParams({
       x = 0,
@@ -226,7 +236,7 @@ export default {
       const { i: id } = item
       this.focusSelectedPlugin(id)
     },
-    ...mapMutations(['focusSelectedPlugin'])
+    ...mapMutations(['focusSelectedPlugin', 'addSelectedPlugins2'])
   }
 }
 </script>

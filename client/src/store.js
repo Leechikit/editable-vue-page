@@ -21,6 +21,19 @@ export default new Vuex.Store({
         focus
       })
     },
+    addSelectedPlugins2(state, val) {
+      const { enName, cnName, x, y, w, h, i, focus = false } = val
+      state.selectedPlugins.push({
+        enName,
+        cnName,
+        x,
+        y,
+        w,
+        h,
+        id: i || randomString({ length: 10 }),
+        focus
+      })
+    },
     removeSelectedPlugin(state, id) {
       const index = findIndex(state.selectedPlugins, { id })
       state.selectedPlugins.splice(index, 1)
