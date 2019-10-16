@@ -1,8 +1,26 @@
 <template>
   <div style="width: 100%; overflow: hidden;">
+    <div
+      draggable="true"
+      @dragstart="dragstart"
+      @drag="dragmove"
+      @dragend="dragend"
+    >
+      test
+    </div>
     <div class="layoutBox">
+      <div
+        v-show="dragareaVisible"
+        class="layoutBox-dragarea"
+        @dragenter.stop="dragenter"
+        @dragover="dragover"
+        @dragexist="dragexist"
+        @dragleave="dragleave"
+        @drop="drop"
+      ></div>
       <div class="layoutBox-edit">
         <grid-layout
+          ref="gridLayout"
           :layout.sync="layout"
           :col-num="8"
           :row-height="50"
@@ -42,6 +60,7 @@
 import VueGridLayout from 'vue-grid-layout'
 import { mapState, mapMutations } from 'vuex'
 import { find } from 'lodash'
+import randomString from 'random-string'
 export default {
   name: 'layoutBox',
   components: {
@@ -51,7 +70,10 @@ export default {
   data() {
     return {
       layout: [],
-      maxY: 0
+      maxY: 0,
+      draging: false,
+      dragareaVisible: false,
+      currentId: null
     }
   },
   computed: {
@@ -93,6 +115,82 @@ export default {
     })
   },
   methods: {
+    dragstart(event) {
+      console.log('dragstart')
+      console.log(event)
+      this.dragareaVisible = true
+
+      // this.$refs.gridLayout.dragEvent(
+      //   'dragstart',
+      //   this.currentId,
+      //   event.offsetX,
+      //   event.offsetY,
+      //   4,
+      //   2
+      // )
+    },
+    dragmove(event) {
+      // console.log('dragmove')
+      // console.log(event)
+      if (this.draging === true) {
+        console.log(event.offsetX + ',' + event.offsetY)
+        this.$refs.gridLayout.dragEvent(
+          'dragmove',
+          this.currentId,
+          Math.floor(event.offsetX / 125),
+          Math.floor(event.offsetY / 50),
+          4,
+          2
+        )
+      }
+    },
+    dragend(event) {
+      console.log(this.layout)
+      console.log('dragend')
+      this.dragareaVisible = false
+      this.$refs.gridLayout.dragEvent(
+        'dragend',
+        this.currentId,
+        Math.floor(event.offsetX / 125),
+        Math.floor(event.offsetY / 50),
+        4,
+        2
+      )
+      this.currentId = null
+    },
+    dragenter(event) {
+      if (this.draging === false) {
+        this.draging = true
+        this.currentId = randomString({ length: 10 })
+        this.layout.push({
+          x: Math.floor(event.offsetX / 125),
+          y: Math.floor(event.offsetY / 50),
+          w: 4,
+          h: 2,
+          i: this.currentId,
+          enName: 'test',
+          cnName: '测试',
+          focus: false
+        })
+        console.log(this.layout)
+      }
+    },
+    dragover(event) {
+      event.preventDefault()
+    },
+    dragexist() {
+      console.log('exist')
+      this.draging = false
+    },
+    dragleave() {
+      console.log('dragleave')
+      this.layout.pop
+      this.draging = false
+    },
+    drop() {
+      console.log('drop')
+      this.draging = false
+    },
     setLayoutParams({
       x = 0,
       y = this.maxY,
@@ -138,6 +236,14 @@ export default {
   position: relative;
   width: 100%;
   overflow-x: auto;
+  &-dragarea {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
   &-edit {
     position: relative;
     z-index: 1;
