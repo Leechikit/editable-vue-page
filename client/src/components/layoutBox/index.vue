@@ -14,7 +14,6 @@
         class="layoutBox-dragarea"
         @dragenter.stop="dragenter"
         @dragover="dragover"
-        @dragexist="dragexist"
         @dragleave="dragleave"
         @drop="drop"
       ></div>
@@ -82,7 +81,6 @@ export default {
   watch: {
     selectedPlugins: {
       handler: function(val) {
-        console.log(val)
         // 添加或修改
         if (val.length >= this.layout.length) {
           val.forEach((item, index) => {
@@ -133,28 +131,25 @@ export default {
       // console.log('dragmove')
       // console.log(event)
       if (this.draging === true) {
-        console.log(event.offsetX + ',' + event.offsetY)
         this.$refs.gridLayout.dragEvent(
           'dragmove',
           this.currentId,
           Math.floor(event.offsetX / 125),
           Math.floor(event.offsetY / 50),
-          4,
-          2
+          2,
+          4
         )
       }
     },
     dragend(event) {
-      console.log(this.layout)
-      console.log('dragend')
       this.dragareaVisible = false
       this.$refs.gridLayout.dragEvent(
         'dragend',
         this.currentId,
         Math.floor(event.offsetX / 125),
         Math.floor(event.offsetY / 50),
-        4,
-        2
+        2,
+        4
       )
       this.currentId = null
     },
@@ -178,10 +173,6 @@ export default {
     dragover(event) {
       event.preventDefault()
     },
-    dragexist() {
-      console.log('exist')
-      this.draging = false
-    },
     dragleave() {
       console.log('dragleave')
       this.layout.pop()
@@ -200,6 +191,7 @@ export default {
         cnName: '测试',
         focus: false
       })
+      this.focusSelectedPlugin(this.currentId)
     },
     setLayoutParams({
       x = 0,
