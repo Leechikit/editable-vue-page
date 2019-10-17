@@ -73,6 +73,7 @@ export default {
   watch: {
     selectedPlugins: {
       handler: function(val) {
+        console.log(val)
         // 添加或修改
         if (val.length >= this.layout.length) {
           this.layout = val
@@ -133,6 +134,7 @@ export default {
         this.currentPlugin.h,
         this.currentPlugin.w
       )
+      // this.$refs.gridLayout.layoutUpdate()
       this.focusSelectedPlugin(this.currentPlugin.i)
     },
     formatPlugin(plugin) {

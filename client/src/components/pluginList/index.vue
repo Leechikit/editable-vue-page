@@ -166,10 +166,12 @@ export default {
 <style lang="scss" scoped>
 @import '~@/assets/styles/base.scss';
 .pluginList {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   border-left: 1px solid $color-layout-border;
-  overflow: auto;
   &-list {
+    flex: 1;
     margin-bottom: 15px;
   }
   &-item {
@@ -222,6 +224,31 @@ export default {
     .option {
       padding: 5px 0;
       cursor: pointer;
+    }
+  }
+}
+</style>
+<style lang="scss">
+.pluginList {
+  .el-tabs {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    &__content {
+      flex: 1;
+      .el-tab-pane {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        .pluginList-list {
+          flex: 1;
+          overflow: auto;
+        }
+        .pluginList-buttons {
+          flex-shrink: 0;
+          margin-bottom: 20px;
+        }
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
-  <div class="editor" v-loading="loading">
-    <el-container>
-      <el-main class="editor-container">
+  <div class="page" v-loading="loading">
+    <el-container class="page-container">
+      <el-main class="page-main">
         <componentDetail
           ref="componentDetail"
           v-model="detail"
@@ -33,7 +33,7 @@
         </div>
       </el-main>
       <transition name="slide-in">
-        <el-aside v-show="asideVisible" class="editor-aside" width="220px">
+        <el-aside v-show="asideVisible" class="page-aside" width="220px">
           <pluginList></pluginList>
         </el-aside>
       </transition>
@@ -48,7 +48,7 @@ import pluginList from '@/components/pluginList'
 import HTTP_PAGE from '@/api/page'
 
 export default {
-  name: 'editor',
+  name: 'page',
   components: {
     componentDetail,
     editorBox,
@@ -162,12 +162,19 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.editor {
+.page {
   margin: -20px;
+  height: calc(100% + 40px);
   overflow: hidden;
+  &-container {
+    height: 100%;
+  }
+  &-main {
+    height: 100%;
+    overflow: auto;
+  }
   &-aside {
     background-color: #fff;
-    overflow: auto;
   }
 }
 .button-list {
