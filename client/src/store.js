@@ -7,51 +7,44 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    selectedPlugins: []
+    selectedPlugins: [],
+    dragareaVisible: false
   },
   mutations: {
-    addSelectedPlugins(state, val) {
-      const { enName, cnName, width, height, focus = false } = val
+    addSelectedPlugins(state, plugin) {
+      const { enName, cnName, w, h, x, y, i, focus = false } = plugin
       state.selectedPlugins.push({
         enName,
         cnName,
-        w: Math.ceil(width / 125),
-        h: Math.ceil(height / 50),
-        id: randomString({ length: 10 }),
-        focus
-      })
-    },
-    addSelectedPlugins2(state, val) {
-      const { enName, cnName, x, y, w, h, i, focus = false } = val
-      state.selectedPlugins.push({
-        enName,
-        cnName,
-        x,
-        y,
         w,
         h,
-        id: i || randomString({ length: 10 }),
+        x,
+        y,
+        i,
         focus
       })
     },
-    removeSelectedPlugin(state, id) {
-      const index = findIndex(state.selectedPlugins, { id })
+    removeSelectedPlugin(state, i) {
+      const index = findIndex(state.selectedPlugins, { i })
       state.selectedPlugins.splice(index, 1)
     },
-    modifySelectedPlugins(state, val) {
-      const index = findIndex(state.selectedPlugins, { id: val.id })
+    modifySelectedPlugins(state, plugin) {
+      const index = findIndex(state.selectedPlugins, { i: plugin.i })
       if (index > -1) {
-        state.selectedPlugins.splice(index, 1, val)
+        state.selectedPlugins.splice(index, 1, plugin)
       }
     },
-    focusSelectedPlugin(state, id) {
+    focusSelectedPlugin(state, i) {
       state.selectedPlugins.forEach(item => {
-        if (item.id === id) {
+        if (item.i === i) {
           item.focus = true
         } else {
           item.focus = false
         }
       })
+    },
+    setDragareaVisible(state, boolean) {
+      state.dragareaVisible = boolean
     }
   },
   actions: {}

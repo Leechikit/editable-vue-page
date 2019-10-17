@@ -26,7 +26,9 @@
                     class="option"
                     v-for="(item, $index) in platformPlugins"
                     :key="$index"
-                    @click="select(item)"
+                    draggable="true"
+                    @dragstart="dragstart(item)"
+                    @dragend="dragend"
                   >
                     {{ item.cnName }}
                   </div>
@@ -43,7 +45,9 @@
                     class="option"
                     v-for="(item, $index) in projectPlugins"
                     :key="$index"
-                    @click="select(item)"
+                    draggable="true"
+                    @dragstart="dragstart(item)"
+                    @dragend="dragend"
                   >
                     {{ item.cnName }}
                   </div>
@@ -77,6 +81,8 @@
 <script>
 import HTTP_PLUGIN from '@/api/plugin'
 import { mapState, mapMutations } from 'vuex'
+import eventBus from '@/helper/eventBus'
+
 export default {
   name: 'pluginList',
   data() {
@@ -106,6 +112,12 @@ export default {
     this.getProjectPlugins()
   },
   methods: {
+    dragstart(plugin) {
+      eventBus.$emit('dragstart', plugin)
+    },
+    dragend() {
+      eventBus.$emit('dragend')
+    },
     async getPlatformPlugins() {
       this.platformLoading = true
       let result = await HTTP_PLUGIN.getList({
@@ -126,35 +138,28 @@ export default {
         this.projectPlugins = result.result
       }
     },
-    select(item) {
-      this.addSelectedPlugins(item)
-    },
     clickEvent(item) {
-      const { id } = item
-      this.focusSelectedPlugin(id)
+      const { i } = item
+      this.focusSelectedPlugin(i)
     },
-    modifyEvent(item) {
+    modifyEvent() {
       this.modifyPluginVisible = true
     },
     deleteEvent(item) {
-      const { id } = item
+      const { i } = item
       this.$confirm('确定删除该组件?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.removeSelectedPlugin(id)
+        this.removeSelectedPlugin(i)
         this.$message({
           type: 'success',
           message: '删除成功!'
         })
       })
     },
-    ...mapMutations([
-      'addSelectedPlugins',
-      'focusSelectedPlugin',
-      'removeSelectedPlugin'
-    ])
+    ...mapMutations(['focusSelectedPlugin', 'removeSelectedPlugin'])
   }
 }
 </script>

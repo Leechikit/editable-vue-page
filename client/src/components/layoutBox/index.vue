@@ -1,18 +1,10 @@
 <template>
   <div style="width: 100%; overflow: hidden;">
-    <div
-      draggable="true"
-      @dragstart="dragstart"
-      @drag="dragmove"
-      @dragend="dragend"
-    >
-      test
-    </div>
     <div class="layoutBox">
       <div
         v-show="dragareaVisible"
         class="layoutBox-dragarea"
-        @dragenter.stop="dragenter"
+        @dragenter="dragenter"
         @dragover="dragover"
         @dragleave="dragleave"
         @drop="drop"
@@ -21,8 +13,8 @@
         <grid-layout
           ref="gridLayout"
           :layout.sync="layout"
-          :col-num="8"
-          :row-height="50"
+          :col-num="1000 / colWidth"
+          :row-height="colHeight"
           :is-draggable="true"
           :is-resizable="true"
           :is-mirrored="false"
@@ -30,7 +22,6 @@
           :margin="[0, 0]"
           :autoSize="true"
           :use-css-transforms="true"
-          @layout-updated="layoutUpdatedEvent"
         >
           <grid-item
             v-for="item in layout"
@@ -60,6 +51,7 @@ import VueGridLayout from 'vue-grid-layout'
 import { mapState, mapMutations } from 'vuex'
 import { find } from 'lodash'
 import randomString from 'random-string'
+import eventBus from '@/helper/eventBus'
 export default {
   name: 'layoutBox',
   components: {
@@ -69,10 +61,10 @@ export default {
   data() {
     return {
       layout: [],
-      maxY: 0,
-      draging: false,
-      dragareaVisible: false,
-      currentId: null
+      colWidth: 125,
+      colHeight: 50,
+      currentPlugin: null,
+      dragareaVisible: false
     }
   },
   computed: {
@@ -83,13 +75,7 @@ export default {
       handler: function(val) {
         // 添加或修改
         if (val.length >= this.layout.length) {
-          val.forEach((item, index) => {
-            if (!find(this.layout, { i: item.id })) {
-              this.layout.push(this.setLayoutParams({ ...item, i: item.id }))
-            } else {
-              this.layout[index].focus = item.focus
-            }
-          })
+          this.layout = val
           // 删除
         } else {
           let deleteIndex = null
@@ -108,127 +94,78 @@ export default {
     }
   },
   created() {
-    this.layout = this.selectedPlugins.map(item => {
-      return this.setLayoutParams({ ...item, i: item.id })
-    })
+    this.layout = this.selectedPlugins
+    eventBus.$on('dragstart', this.dragstart)
+    eventBus.$on('dragend', this.dragend)
   },
   methods: {
-    dragstart(event) {
-      console.log('dragstart')
-      console.log(event)
+    dragstart(plugin) {
       this.dragareaVisible = true
-
-      // this.$refs.gridLayout.dragEvent(
-      //   'dragstart',
-      //   this.currentId,
-      //   event.offsetX,
-      //   event.offsetY,
-      //   4,
-      //   2
-      // )
+      this.currentPlugin = this.formatPlugin(plugin)
     },
-    dragmove(event) {
-      // console.log('dragmove')
-      // console.log(event)
-      if (this.draging === true) {
-        this.$refs.gridLayout.dragEvent(
-          'dragmove',
-          this.currentId,
-          Math.floor(event.offsetX / 125),
-          Math.floor(event.offsetY / 50),
-          2,
-          4
-        )
-      }
-    },
-    dragend(event) {
+    dragend() {
       this.dragareaVisible = false
-      this.$refs.gridLayout.dragEvent(
-        'dragend',
-        this.currentId,
-        Math.floor(event.offsetX / 125),
-        Math.floor(event.offsetY / 50),
-        2,
-        4
-      )
-      this.currentId = null
+      this.currentPlugin = null
     },
-    dragenter(event) {
-      if (this.draging === false) {
-        this.draging = true
-        this.currentId = randomString({ length: 10 })
-        this.layout.push({
-          x: Math.floor(event.offsetX / 125),
-          y: Math.floor(event.offsetY / 50),
-          w: 4,
-          h: 2,
-          i: this.currentId,
-          enName: 'test',
-          cnName: '测试',
-          focus: false
-        })
-        console.log(this.layout)
-      }
+    dragenter() {
+      this.addSelectedPlugins(this.currentPlugin)
     },
     dragover(event) {
       event.preventDefault()
+      this.$refs.gridLayout.dragEvent(
+        'dragmove',
+        this.currentPlugin.i,
+        Math.floor(event.offsetX / this.colWidth),
+        Math.floor(event.offsetY / this.colHeight),
+        this.currentPlugin.h,
+        this.currentPlugin.w
+      )
     },
     dragleave() {
-      console.log('dragleave')
-      this.layout.pop()
-      this.draging = false
+      this.removeSelectedPlugin(this.currentPlugin.i)
     },
-    drop() {
-      console.log('drop')
-      this.draging = false
-      this.addSelectedPlugins2({
-        x: Math.floor(event.offsetX / 125),
-        y: Math.floor(event.offsetY / 50),
-        w: 4,
-        h: 2,
-        i: this.currentId,
-        enName: 'test',
-        cnName: '测试',
-        focus: false
-      })
-      this.focusSelectedPlugin(this.currentId)
+    drop(event) {
+      this.$refs.gridLayout.dragEvent(
+        'dragend',
+        this.currentPlugin.i,
+        Math.floor(event.offsetX / this.colWidth),
+        Math.floor(event.offsetY / this.colHeight),
+        this.currentPlugin.h,
+        this.currentPlugin.w
+      )
+      this.focusSelectedPlugin(this.currentPlugin.i)
     },
-    setLayoutParams({
-      x = 0,
-      y = this.maxY,
-      w = 4,
-      h = 2,
-      i,
-      enName,
-      cnName,
-      focus
-    }) {
-      let result = {
-        x,
-        y,
-        w,
-        h,
-        i,
+    formatPlugin(plugin) {
+      const {
         enName,
         cnName,
+        width,
+        height,
+        x = 0,
+        y = 0,
+        i = randomString({ length: 10 }),
+        focus = false
+      } = plugin
+      return {
+        enName,
+        cnName,
+        w: Math.ceil(+width / this.colWidth),
+        h: Math.ceil(+height / this.colHeight),
+        x: Math.floor(+x / this.colWidth),
+        y: Math.floor(+y / this.colHeight),
+        i,
         focus
       }
-      this.maxY = y + h
-      return result
-    },
-    layoutUpdatedEvent(newLayout) {
-      this.maxY = 0
-      newLayout.forEach(item => {
-        if (item.y + item.h > this.maxY) {
-          this.maxY = item.y + item.h
-        }
-      })
     },
     clickEvent(item) {
       const { i: id } = item
       this.focusSelectedPlugin(id)
     },
-    ...mapMutations(['focusSelectedPlugin', 'addSelectedPlugins2'])
+    ...mapMutations([
+      'focusSelectedPlugin',
+      'removeSelectedPlugin',
+      'addSelectedPlugins'
+    ])
   }
 }
 </script>
