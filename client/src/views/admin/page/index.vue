@@ -61,8 +61,8 @@ export default {
       mode: 'edit', // 表单类型 edit-编辑 create-创建
       loading: false,
       saveLoading: false,
-      isLayout: false,
-      asideVisible: false,
+      isLayout: true,
+      asideVisible: true,
       detail: {
         enName: '',
         cnName: ''

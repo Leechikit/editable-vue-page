@@ -189,7 +189,7 @@ export default {
     position: relative;
     z-index: 1;
     width: 1000px;
-    min-height: 300px;
+    min-height: 600px;
   }
   &-background {
     position: absolute;
