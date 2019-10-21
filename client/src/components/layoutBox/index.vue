@@ -110,6 +110,14 @@ export default {
     },
     dragenter() {
       this.addSelectedPlugins(this.currentPlugin)
+      this.$refs.gridLayout.dragEvent(
+        'dragstart',
+        this.currentPlugin.i,
+        Math.floor(event.offsetX / this.colWidth),
+        Math.floor(event.offsetY / this.colHeight),
+        this.currentPlugin.h,
+        this.currentPlugin.w
+      )
     },
     dragover(event) {
       event.preventDefault()
