@@ -34,6 +34,11 @@ export default new Router({
       ]
     },
     {
+      path: '/form-editor',
+      name: 'form-editor',
+      component: () => import('@/views/form/editor.vue')
+    },
+    {
       path: 'background',
       name: 'background',
       component: () => import('@/views/background')
