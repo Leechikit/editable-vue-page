@@ -1,7 +1,7 @@
 <template>
   <div>
     {{ config.cnName }}
-    <el-input v-model="value"></el-input>
+    <el-input v-model="currentValue"></el-input>
   </div>
 </template>
 
@@ -15,19 +15,21 @@ export default {
         return {
           cnName: '',
           enName: '',
-          tips: '',
-          value: ''
+          tips: ''
         }
       }
+    },
+    value: {
+      type: String
     }
   },
   data() {
     return {
-      value: this.config.value
+      currentValue: this.value
     }
   },
   watch: {
-    value(val) {
+    currentValue(val) {
       this.$emit('input', val)
     }
   },

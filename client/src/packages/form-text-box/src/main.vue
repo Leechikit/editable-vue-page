@@ -34,12 +34,15 @@ export default {
     }
   },
   watch: {
-    value(val) {
-      this.currentValue = val
+    data(val) {
+      this.currentValue = val.value
     },
     currentValue(val) {
       this.$emit('input', val)
     }
+  },
+  created() {
+    console.log(this.data)
   },
   methods: {
     handleInput(event) {

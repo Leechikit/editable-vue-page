@@ -8,7 +8,14 @@
         "cnName": "显示名称",
         "enName": "label",
         "tips": "请填写显示名称",
-        "value": ""
+        "value": "单行文本框"
+      },
+      {
+        "type": "text",
+        "cnName": "提示文案",
+        "enName": "placeholder",
+        "tips": "请填写提示文案",
+        "value": "请输入"
       },
       {
         "type": "switch",

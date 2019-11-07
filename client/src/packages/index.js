@@ -44,12 +44,16 @@ class InsertModule {
 }
 
 const install = function(Vue) {
-  requireAll(components).forEach(component => {
-    component.default.install(Vue)
-  })
-  Vue.prototype.$insertModule = function(element, componentsData) {
-    const self = this
-    return new InsertModule(element, componentsData, self)
+  // requireAll(components).forEach(component => {
+  //   console.log(component)
+  //   component.default.install(Vue)
+  // })
+  Vue.prototype.$insertModule = function(name, componentsData) {
+    console.log(name, componentsData)
+    const component = requireAll(components).filter(item => {
+      return item.default.name === name
+    })
+    return component[0].default.install(componentsData)
   }
 }
 

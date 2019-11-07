@@ -1,7 +1,11 @@
 <template>
   <div>
     {{ config.cnName }}
-    <el-switch v-model="value" active-color="#13ce66" inactive-color="#ff4949">
+    <el-switch
+      v-model="currentValue"
+      active-color="#13ce66"
+      inactive-color="#ff4949"
+    >
     </el-switch>
   </div>
 </template>
@@ -20,15 +24,18 @@ export default {
           value: ''
         }
       }
+    },
+    value: {
+      type: Boolean
     }
   },
   data() {
     return {
-      value: this.config.value
+      currentValue: this.value
     }
   },
   watch: {
-    value(val) {
+    currentValue(val) {
       this.$emit('input', val)
     }
   },
