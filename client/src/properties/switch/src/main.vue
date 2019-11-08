@@ -20,8 +20,7 @@ export default {
         return {
           cnName: '',
           enName: '',
-          tips: '',
-          value: ''
+          tips: ''
         }
       }
     },

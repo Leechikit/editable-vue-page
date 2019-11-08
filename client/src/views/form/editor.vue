@@ -10,30 +10,20 @@
           <div
             v-for="(item, key) in componentMap"
             :key="key"
-            :id="key"
             @click="clickComponentEvent(key)"
           >
-            <component
-              :is="item.compName"
-              :data="item.formatProperties"
-            ></component>
+            <componentEditor
+              :compName="item.compName"
+              :properties="item.properties"
+            ></componentEditor>
           </div>
+          <el-button type="primary" @click="save">保存</el-button>
         </el-main>
         <el-aside class="formEditor-aside" width="200px">
           <div v-if="currCompId !== ''">
-            <!-- <component
-              v-for="(item, $index) in componentMap[currCompId]['properties']"
-              :key="$index"
-              :is="`property-${item.type}`"
-              :config="item"
-              v-model="
-                componentMap[currCompId]['formatProperties'][item.enName]
-              "
-            ></component> -->
             <propertyList
               :currCompId="currCompId"
-              :properties="componentMap[currCompId]['properties']"
-              v-model="componentMap[currCompId]['formatProperties']"
+              v-model="componentMap[currCompId]['properties']"
             ></propertyList>
           </div>
         </el-aside>
@@ -46,11 +36,11 @@ import controlList from '@/components/controlList'
 import componentJson from '@/components.json'
 import randomString from 'random-string'
 import propertyList from '@/components/propertyList'
+import componentEditor from '@/components/componentEditor'
 
-import Vue from 'vue'
 export default {
   name: 'form-editor',
-  components: { controlList, propertyList },
+  components: { controlList, propertyList, componentEditor },
   data() {
     return {
       componentMap: {},
@@ -65,42 +55,20 @@ export default {
         letters: true,
         special: false
       })
-      this.$insertModule(compName, {
-        props: {
-          data: this.formatProperties(componentJson[compName].properties)
-        }
-      })
+      this.$insertModule(compName)
       this.$set(this.componentMap, id, {
         compName,
         properties: JSON.parse(
           JSON.stringify(componentJson[compName].properties)
-        ),
-        formatProperties: this.formatProperties(
-          JSON.parse(JSON.stringify(componentJson[compName].properties))
         )
       })
       this.currCompId = id
-      // this.$nextTick(() => {
-      //   this.$insertModule(compName, {
-      //     props: {
-      //       data: {
-      //         label: '的地方',
-      //         clearable: true
-      //       }
-      //     }
-      //   })
-      //   this.componentMap[id].instance.$mount(`#${id}`)
-      // })
-    },
-    formatProperties(properties) {
-      let result = {}
-      properties.forEach(item => {
-        result[item.enName] = item.value
-      })
-      return result
     },
     clickComponentEvent(id) {
       this.currCompId = id
+    },
+    save() {
+      console.log(this.componentMap)
     }
   }
 }

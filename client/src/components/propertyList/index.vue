@@ -1,11 +1,11 @@
 <template>
   <div v-if="visible">
     <component
-      v-for="(item, $index) in properties"
+      v-for="(item, $index) in currentValue"
       :key="$index"
       :is="`property-${item.type}`"
       :config="item"
-      v-model="currentValue[item.enName]"
+      v-model="item.value"
     ></component>
   </div>
 </template>
@@ -16,11 +16,8 @@ export default {
     currCompId: {
       type: String
     },
-    properties: {
-      type: Array
-    },
     value: {
-      type: Object
+      type: Array
     }
   },
   data() {
@@ -37,8 +34,11 @@ export default {
       })
       this.currentValue = this.value
     },
-    currentValue(value) {
-      this.$emit('input', value)
+    currentValue: {
+      handler(value) {
+        this.$emit('input', value)
+      },
+      deep: true
     }
   }
 }
