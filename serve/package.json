@@ -25,7 +25,7 @@
     "lodash": "^4.17.11",
     "nedb": "^1.8.0",
     "pug": "^2.0.0-rc.1",
-    "shelljs": "^0.8.3"
+    "shelljs": "^0.8.5"
   },
   "devDependencies": {
     "nodemon": "^1.8.1"
